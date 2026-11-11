@@ -341,6 +341,10 @@ body{display:block;padding:0;background:var(--menta)}
 .tabla-dg td.si{color:var(--verde-2)}
 .tabla-dg tfoot td{border:0;font-weight:700;padding-top:8px}
 .item.toca:focus-visible,.match:focus-visible{outline:2px solid var(--verde);outline-offset:2px}
+.inscritos{display:flex;flex-wrap:wrap;gap:6px}
+.inscritos span{display:inline-flex;align-items:center;gap:6px;background:#F5F8F7;border-radius:999px;padding:6px 12px 6px 6px;font-size:.84rem;font-weight:600}
+.inscritos span b{width:22px;height:22px;border-radius:50%;background:var(--tinta);color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:.72rem}
+.inscritos span.yo{background:var(--menta-2);box-shadow:inset 0 0 0 1.5px var(--verde)}
 </style>
 </head>
 <body>
@@ -572,6 +576,8 @@ function verPass(id, b) { const i = $(id); i.type = i.type === 'password' ? 'tex
 function modal(t, x, e = 'fiesta') { $('mdT').innerText = t; $('mdX').innerHTML = x; $('velo').classList.add('on'); luki('modal', e); }
 function copiar(t) { const ok = () => luki('modal', 'fiesta'); if (navigator.clipboard) navigator.clipboard.writeText(t).then(ok).catch(() => prompt('Copia:', t)); else prompt('Copia:', t); }
 function soles(n) { return 'S/ ' + Number(n || 0).toFixed(2); }
+const POZO_INICIAL = 10;
+function pozoDe(s) { return s.estado === 'CANCELADA' ? 0 : Math.max(Number(s.pozo) || 0, POZO_INICIAL + (Number(s.jugadores) || 0) * (Number(s.entrada) || ENTRADA)); }
 
 /* ---------- Luki ---------- */
 document.querySelectorAll('[data-luki]').forEach(el => {
@@ -733,7 +739,7 @@ function estadoPill(s) {
 function infoAbajo(s) {
   if (abierta(s)) return `<div><small>Cierra en</small><b data-cierre="${msDe(s.cierre)}">${falta(msDe(s.cierre))}</b></div>`;
   if (s.estado === 'CANCELADA') return `<div><small>Entradas devueltas</small><b>${s.jugadores} jugadores</b></div>`;
-  return `<div><small>Pozo final</small><b>${soles(s.pozo)}</b></div>`;
+  return `<div><small>Pozo final</small><b>${soles(pozoDe(s))}</b></div>`;
 }
 function tarjeta(s) {
   const ini = msDe(s.inicio);
@@ -744,7 +750,7 @@ function tarjeta(s) {
       <div class="vs${s.resultado ? ' res' : ''}">${s.resultado ? esc(s.resultado) : 'vs'}</div>
       <div class="eq">${escudo(s.logoVisita)}<span>${esc(s.visita || s.partido.split(' vs ')[1] || '')}</span></div>
     </div>
-    <div class="m-bot">${infoAbajo(s)}<div><small>Jugadores · pozo</small><b>${s.jugadores} · ${soles(s.pozo)}</b></div>${estadoPill(s)}</div>
+    <div class="m-bot">${infoAbajo(s)}<div><small>Jugadores · pozo</small><b>${s.jugadores} · ${soles(pozoDe(s))}</b></div>${estadoPill(s)}</div>
   </button>`;
 }
 function pintarSalas() {
@@ -831,15 +837,16 @@ async function abrirSala(id) {
 function volverLista() { salaActual = null; try { history.replaceState(null, '', AQUI); } catch (e) {} ir('sInicio'); pintarSalas(); }
 function cabecera(s, premios) {
   const ini = msDe(s.inicio), ab = abierta(s);
-  premios = premios || [0.4, 0.25, 0.05].map(p => Math.floor(s.pozo * p * 100) / 100);
+  const pozo = pozoDe(s);
+  if (!premios || !premios.some(Boolean)) premios = [0.4, 0.25, 0.05].map(p => Math.floor(pozo * p * 100) / 100);
   return `<div class="m-top"><span class="liga">${esc(s.liga)}</span><span>${diaTxt(ini)} · ${horaTxt(ini)}</span></div>
     <div class="equipos">
       <div class="eq">${escudo(s.logoLocal)}<span>${esc(s.local)}</span></div>
       <div class="vs${s.resultado ? ' res' : ''}">${s.resultado ? esc(s.resultado) : 'vs'}</div>
       <div class="eq">${escudo(s.logoVisita)}<span>${esc(s.visita)}</span></div>
     </div>
-    <div class="pozo">${['1.º', '2.º', '3.º'].map((t, i) => `<div><small>${t}</small><b>${s.pozo ? soles(premios[i]) : ['40%', '25%', '5%'][i]}</b></div>`).join('')}</div>
-    <div class="pozo-tot">${s.jugadores} jugador${s.jugadores === 1 ? '' : 'es'} · pozo <b>${soles(s.pozo)}</b>${ab ? ` · cierra en <b data-cierre="${msDe(s.cierre)}">${falta(msDe(s.cierre))}</b>` : ''}</div>`;
+    <div class="pozo">${['1.º', '2.º', '3.º'].map((t, i) => `<div><small>${t}</small><b>${soles(premios[i])}</b></div>`).join('')}</div>
+    <div class="pozo-tot">${s.jugadores} jugador${s.jugadores === 1 ? '' : 'es'} · pozo <b>${soles(pozo)}</b>${ab ? ` · cierra en <b data-cierre="${msDe(s.cierre)}">${falta(msDe(s.cierre))}</b>` : ''}</div>`;
 }
 function pintarSala() {
   if (!datosSala) return;
@@ -847,12 +854,19 @@ function pintarSala() {
   $('salaHead').innerHTML = cabecera(s, datosSala.premios);
   const mio = misSalasIds[s.id];
   let h = '';
-  if (abierta(s)) h = mio ? miPronostico(mio, true) : formulario(s);
+  if (abierta(s)) h = (mio ? miPronostico(mio, true) : formulario(s)) + listaInscritos();
   else if (s.estado === 'CANCELADA') h = `<div class="vacio">Esta sala se canceló (partido postergado o no llegó a ${reglas ? reglas.minJugadores : 5} jugadores). Si entraste, tus Golcitos ya volvieron a tu cuenta.</div>`;
   else if (s.estado === 'ABIERTA') h = (mio ? miPronostico(mio) : '') + '<div class="mio" style="margin-top:14px">⏱️ La sala acaba de cerrar. En unos minutos verás los pronósticos de todos.</div>';
   else h = (mio ? cajaPremio(mio) + miPronostico(mio) : '') + resultadoYRanking(s);
   $('salaCuerpo').innerHTML = h;
   if (abierta(s) && !mio) pintarForm();
+}
+function listaInscritos() {
+  const l = datosSala.inscritos || [];
+  return `<div class="bloque"><h3>En la sala${l.length ? ` (${l.length})` : ''}</h3>
+    ${l.length ? `<p class="ayuda">En orden de inscripción. Sus pronósticos se ven cuando cierre la sala.</p><div class="inscritos">${l.map((u, i) =>
+      `<span class="${perfil && u === perfil.usuario ? 'yo' : ''}"><b>${i + 1}</b>@${esc(u)}</span>`).join('')}</div>`
+    : '<p class="ayuda">Todavía nadie entró. ¡Sé el primero!</p>'}</div>`;
 }
 function miPronostico(t, abiertaTxt) {
   const p = t.pronostico, primer = { L: datosSala.sala.local, V: datosSala.sala.visita, N: 'Nadie' }[p.primer] || '-';
@@ -997,7 +1011,8 @@ async function entrarSala() {
     ponerSaldo(r.saldoGolcitos, true);
     const t = { ticket: r.ticket, sala: s, pronostico: { ...pron }, puntos: null, detalle: '', estado: 'EN JUEGO', premio: 0 };
     misSalasIds[s.id] = t; mias = [t, ...mias];
-    s.jugadores = r.jugadores; s.pozo = r.pozo; datosSala.premios = [0.4, 0.25, 0.05].map(p => Math.floor(r.pozo * p * 100) / 100);
+    s.jugadores = r.jugadores; s.pozo = r.pozo; datosSala.premios = [0.4, 0.25, 0.05].map(p => Math.floor(pozoDe(s) * p * 100) / 100);
+    if (perfil && !(datosSala.inscritos || []).includes(perfil.usuario)) datosSala.inscritos = [...(datosSala.inscritos || []), perfil.usuario];
     pintarSala(); cargarMias();
     luki('hero', 'fiesta', `¡Ya estás en ${s.partido}! Tu ticket es ${r.ticket}.`);
     modal('¡Ya estás en la sala!', `Tu ticket es <b style="font-family:var(--display);font-size:1.2rem">${esc(r.ticket)}</b>
