@@ -1,0 +1,968 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#0E2A47">
+<title>Luki Gool · Pronostica y gana · Jakuna</title>
+<meta name="description" content="Pronostica partidos de Liga 1 y Champions. Entras con 5 Golcitos y los 3 mejores se reparten el pozo. +18.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&family=Rubik:wght@800;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ===== Jakuna · Mi cuenta =====
+   Tinta   #0E2A47   Verde  #12A877 / #0C8A61
+   Menta   #EEF4F2   Dorado #F2B63D (solo Luki y Lukitas)
+   Poppins (marca, cifras, botones) + Inter (texto), como jakuna-web */
+:root{
+  --tinta:#0E2A47; --tinta-2:#3C5266; --gris:#6B7C8A; --linea:#DDE7E3;
+  --verde:#12A877; --verde-2:#0C8A61; --menta:#EEF4F2; --menta-2:#E2F2EB;
+  --oro:#F2B63D; --oro-2:#D9951A; --blanco:#fff; --rojo:#D2493F;
+  --r-xl:28px; --r-l:20px; --r-m:14px;
+  --display:Poppins,system-ui,sans-serif; --texto:'Inter',system-ui,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--texto);background:var(--menta);color:var(--tinta);min-height:100vh;display:flex;justify-content:center;padding:18px 14px 40px;-webkit-font-smoothing:antialiased}
+.app{width:100%;max-width:440px}
+button,input,select{font:inherit;color:inherit}
+:focus-visible{outline:3px solid rgba(18,168,119,.45);outline-offset:2px}
+
+/* Barra superior */
+.top{display:flex;align-items:center;justify-content:space-between;padding:4px 6px 14px}
+.marca{font-family:var(--display);font-weight:800;font-size:1.75rem;letter-spacing:-.03em;line-height:1;color:var(--tinta);text-decoration:none}
+.marca b{color:var(--verde);font-weight:800}
+.chip-user{display:none;align-items:center;gap:8px;background:var(--blanco);border-radius:999px;padding:5px 6px 5px 12px;font-size:.82rem;font-weight:600;box-shadow:0 1px 2px rgba(14,42,71,.06)}
+.chip-user button{border:0;background:var(--menta);border-radius:999px;padding:5px 11px;font-size:.76rem;cursor:pointer;color:var(--tinta-2)}
+
+/* Tarjeta principal */
+.card{background:var(--blanco);border-radius:var(--r-xl);padding:24px 20px;box-shadow:0 18px 40px -24px rgba(14,42,71,.35)}
+.screen{display:none}
+.screen.on{display:block;animation:entra .28s ease}
+@keyframes entra{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+/* ===== Luki ===== */
+.stage{display:flex;align-items:flex-end;gap:12px;margin-bottom:18px}
+.stage.centro{flex-direction:column;align-items:center;text-align:center}
+.luki{width:118px;height:126px;flex-shrink:0;overflow:visible}
+.luki.sm{width:84px;height:90px}
+.bocadillo{position:relative;background:var(--menta);border-radius:18px;padding:11px 14px;font-size:.9rem;line-height:1.4;color:var(--tinta);max-width:270px}
+.stage:not(.centro) .bocadillo{margin-bottom:22px}
+.stage:not(.centro) .bocadillo::before{content:'';position:absolute;left:-7px;bottom:14px;border:8px solid transparent;border-right-color:var(--menta);border-left:0}
+.stage.centro .bocadillo::before{content:'';position:absolute;left:50%;top:-7px;transform:translateX(-50%);border:8px solid transparent;border-bottom-color:var(--menta);border-top:0}
+.stage.centro .bocadillo{margin-top:6px}
+
+.luki .cuerpo{animation:flota 3.2s ease-in-out infinite;transform-box:fill-box;transform-origin:50% 100%}
+.luki .sombra{animation:sombra 3.2s ease-in-out infinite;transform-box:fill-box;transform-origin:center}
+.luki .ojos{animation:parpadea 4.6s infinite;transform-box:fill-box;transform-origin:center}
+.luki .oreja-i{transform-box:fill-box;transform-origin:55% 96%;animation:orejaI 3s ease-in-out infinite;transition:transform .35s}
+.luki .oreja-d{transform-box:fill-box;transform-origin:15% 98%;animation:orejaD 2.6s ease-in-out infinite;transition:transform .35s}
+.luki .nariz{transform-box:fill-box;transform-origin:center;animation:nariz 2s infinite}
+.luki .bolilla{transform-box:fill-box;transform-origin:center;animation:bolilla 4.2s ease-in-out infinite}
+.luki .brazo-d{transform-box:fill-box;transform-origin:30% 60%}
+.luki .boca-triste,.luki .puntos,.luki .chispas{opacity:0}
+@keyframes flota{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+@keyframes sombra{0%,100%{transform:scaleX(1);opacity:.18}50%{transform:scaleX(.85);opacity:.1}}
+@keyframes parpadea{0%,92%,100%{transform:scaleY(1)}95%{transform:scaleY(.1)}}
+@keyframes orejaI{0%,100%{transform:rotate(0)}50%{transform:rotate(-4deg)}}
+@keyframes orejaD{0%,30%,100%{transform:rotate(0)}15%{transform:rotate(9deg)}}
+@keyframes nariz{0%,20%,100%{transform:translateY(0)}10%{transform:translateY(-1.5px)}}
+/* la bolilla salta y da una voltereta */
+@keyframes bolilla{0%,70%,100%{transform:translateY(0) scaleX(1)}76%{transform:translateY(-10px) scaleX(.12)}82%{transform:translateY(-15px) scaleX(1)}88%{transform:translateY(-7px) scaleX(.12)}94%{transform:translateY(0) scaleX(1)}97%{transform:translateY(0) scaleY(.88)}}
+/* saluda */
+.luki.saluda .brazo-d{animation:saluda .8s ease-in-out 3}
+.luki.saluda .oreja-d{animation:orejaD .9s ease-in-out 3}
+@keyframes saluda{0%,100%{transform:translate(0,0) rotate(0)}30%{transform:translate(36px,-70px) rotate(-25deg)}65%{transform:translate(36px,-70px) rotate(20deg)}}
+/* piensa */
+.luki.piensa .oreja-d{animation:none;transform:rotate(24deg)}
+.luki.piensa .pupilas{animation:mira 1.4s ease-in-out infinite}
+.luki.piensa .puntos{opacity:1}
+.luki.piensa .puntos circle{animation:punto 1.2s infinite}
+.luki.piensa .puntos circle:nth-child(2){animation-delay:.2s}.luki.piensa .puntos circle:nth-child(3){animation-delay:.4s}
+.luki.piensa .bolilla{animation:none}
+@keyframes mira{0%,100%{transform:translate(0,0)}50%{transform:translate(7px,-5px)}}
+@keyframes punto{0%,100%{opacity:.2}50%{opacity:1}}
+/* fiesta: salta y lanza la bolilla bien alto */
+.luki.fiesta .cuerpo{animation:salta .6s cubic-bezier(.3,1.6,.5,1) 3}
+.luki.fiesta .bolilla{animation:lanza 1s ease-in-out 2}
+.luki.fiesta .chispas{opacity:1;animation:chispas .9s ease-out 2}
+.luki.fiesta .oreja-i{animation:none;transform:rotate(-10deg)}.luki.fiesta .oreja-d{animation:none;transform:rotate(14deg)}
+@keyframes salta{0%,100%{transform:translateY(0)}45%{transform:translateY(-30px)}}
+@keyframes lanza{0%,100%{transform:translateY(0) scaleX(1)}20%{transform:translateY(-110px) scaleX(-1)}40%{transform:translateY(-150px) scaleX(1)}60%{transform:translateY(-110px) scaleX(-1)}85%{transform:translateY(0) scaleX(1)}}
+@keyframes chispas{from{transform:scale(.6);opacity:1}to{transform:scale(1.2);opacity:0}}
+.luki .chispas{transform-box:fill-box;transform-origin:center}
+/* triste: orejas caídas */
+.luki.triste .boca-feliz{opacity:0}.luki.triste .boca-triste{opacity:1}
+.luki.triste .oreja-i{animation:none;transform:rotate(-38deg)}.luki.triste .oreja-d{animation:none;transform:rotate(48deg)}
+.luki.triste .cuerpo{animation:none;transform:translateY(6px)}
+.luki.triste .bolilla{animation:none;transform:translateY(10px)}
+@media (prefers-reduced-motion:reduce){.luki *,.screen.on{animation:none!important}}
+
+/* Tabs */
+.seg{display:grid;grid-template-columns:1fr 1fr;background:var(--menta);border-radius:999px;padding:4px;margin-bottom:20px}
+.seg button{border:0;background:transparent;border-radius:999px;padding:10px;font-family:var(--display);font-weight:600;font-size:1rem;color:var(--gris);cursor:pointer;transition:background .2s,color .2s}
+.seg button.on{background:var(--blanco);color:var(--tinta);box-shadow:0 2px 8px -2px rgba(14,42,71,.18)}
+
+/* Formularios */
+.campo{margin-bottom:14px}
+.campo label{display:block;font-size:.82rem;font-weight:600;margin:0 0 6px 4px;color:var(--tinta-2)}
+.campo input,.campo select{width:100%;height:50px;padding:0 16px;background:#F5F8F7;border:1.5px solid transparent;border-radius:var(--r-m);font-size:.95rem;transition:border-color .15s,background .15s}
+.campo input:focus,.campo select:focus{outline:none;border-color:var(--verde);background:var(--blanco)}
+.campo input::placeholder{color:#9DABB5}
+.ayuda{font-size:.76rem;color:var(--gris);margin:6px 0 0 4px;line-height:1.4}
+.dos{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.tel{display:grid;grid-template-columns:1fr 1.5fr;gap:8px}
+.pass{position:relative}
+.pass input{padding-right:70px}
+.ojo{position:absolute;right:8px;top:50%;transform:translateY(-50%);border:0;background:transparent;color:var(--verde-2);font-weight:600;font-size:.8rem;cursor:pointer;padding:8px}
+.check{display:flex;gap:10px;align-items:flex-start;font-size:.84rem;line-height:1.4;margin:6px 4px 18px;cursor:pointer}
+.check input{width:20px;height:20px;accent-color:var(--verde);flex-shrink:0;margin-top:1px}
+.enlaces{display:flex;justify-content:space-between;gap:8px;margin:-2px 4px 18px;flex-wrap:wrap}
+.link{border:0;background:none;color:var(--verde-2);font-weight:600;font-size:.84rem;cursor:pointer;padding:2px 0}
+
+/* Botones */
+.btn{width:100%;height:54px;border:0;border-radius:999px;background:var(--verde);color:#fff;font-family:var(--display);font-weight:600;font-size:1rem;cursor:pointer;transition:transform .12s,background .2s,opacity .2s;display:flex;align-items:center;justify-content:center;gap:8px}
+.btn:hover{background:var(--verde-2)}
+.btn:active{transform:scale(.98)}
+.btn:disabled{background:#B9C6CE;cursor:not-allowed}
+.btn.sec{background:transparent;color:var(--tinta);box-shadow:inset 0 0 0 1.5px var(--linea);margin-top:10px}
+.btn.sec:hover{box-shadow:inset 0 0 0 1.5px var(--tinta-2)}
+.btn s{opacity:.7;font-weight:500;font-size:.92rem}
+
+/* Mensajes */
+.msg{display:none;font-size:.86rem;border-radius:var(--r-m);padding:11px 14px;margin-bottom:14px;line-height:1.45}
+.msg.err{display:block;background:#FCEDEB;color:#9B2E26}
+.msg.ok{display:block;background:var(--menta-2);color:var(--verde-2)}
+.nota{background:#FFF7E3;border-radius:var(--r-m);padding:13px 15px;font-size:.86rem;line-height:1.5;margin-bottom:16px;color:#5A4300}
+
+/* Billetera */
+.billetera{display:flex;align-items:center;gap:6px;background:linear-gradient(160deg,#0E2A47,#16406A);color:#fff;border-radius:var(--r-l);padding:14px 18px 14px 8px;margin-bottom:22px;position:relative;overflow:hidden}
+.billetera .luki{width:96px;height:102px}
+.saldo{font-family:var(--display);font-weight:700;font-size:2.7rem;line-height:.9;letter-spacing:-.02em}
+.saldo-lbl{font-size:.84rem;color:#A9BCCD;margin-top:4px}
+.saldo-lbl b{color:var(--oro);font-weight:600}
+.billetera .bocadillo{position:absolute;right:12px;top:12px;background:rgba(255,255,255,.12);color:#fff;font-size:.78rem;padding:6px 11px;border-radius:12px;max-width:180px}
+.billetera .bocadillo::before{display:none}
+
+/* Paquetes */
+h2{font-family:var(--display);font-weight:700;font-size:1.3rem;margin:0 0 12px 2px;line-height:1.2}
+.paquetes{display:grid;grid-template-columns:repeat(auto-fit,minmax(96px,1fr));gap:10px;margin:4px 0 12px}
+.paq{position:relative;border:0;background:#F5F8F7;border-radius:var(--r-l);padding:16px 10px 14px;text-align:center;cursor:pointer;transition:transform .15s,box-shadow .15s,background .15s}
+.paq:hover{transform:translateY(-2px)}
+.paq.on{background:var(--blanco);box-shadow:0 0 0 2.5px var(--verde),0 10px 22px -12px rgba(18,168,119,.6)}
+.paq .n{font-family:var(--display);font-weight:700;font-size:1.8rem;line-height:1;color:var(--tinta)}
+.paq .u{font-size:.74rem;color:var(--gris);margin-bottom:8px}
+.paq .nom{font-family:var(--display);font-weight:600;font-size:.92rem;line-height:1.1;min-height:2.2em;display:flex;align-items:center;justify-content:center}
+.paq .precio{display:inline-block;margin-top:8px;background:var(--tinta);color:#fff;border-radius:999px;padding:3px 12px;font-family:var(--display);font-weight:700;font-size:1rem}
+.paq.on .precio{background:var(--verde)}
+.off{position:absolute;top:-7px;right:8px;background:var(--oro);color:#4A3200;border-radius:999px;padding:1px 8px;font-size:.72rem;font-weight:700}
+
+.extra{background:#F5F8F7;border-radius:var(--r-l);margin-bottom:10px;overflow:hidden}
+.extra>button{width:100%;border:0;background:transparent;padding:14px 16px;display:flex;justify-content:space-between;align-items:center;gap:10px;text-align:left;cursor:pointer;font-family:var(--display);font-weight:600;font-size:1rem;color:var(--tinta)}
+.extra>button span{color:var(--verde-2);font-size:1.3rem;line-height:1;transition:transform .2s}
+.extra.on>button span{transform:rotate(45deg)}
+.extra .dentro{display:none;padding:0 16px 16px}
+.extra.on .dentro{display:block}
+.fila{display:flex;gap:8px}
+.fila input{flex:1;min-width:0;height:48px;border:1.5px solid transparent;background:var(--blanco);border-radius:var(--r-m);padding:0 14px;font-size:1rem}
+.fila input:focus{outline:none;border-color:var(--verde)}
+.fila button{border:0;border-radius:var(--r-m);background:var(--tinta);color:#fff;padding:0 16px;font-weight:600;cursor:pointer;white-space:nowrap}
+.cotiza{font-size:.88rem;margin-top:10px;line-height:1.4;color:var(--tinta-2)}
+.cotiza b{font-family:var(--display);font-size:1.05rem;color:var(--tinta)}
+.cupon-ok{display:flex;align-items:center;justify-content:space-between;gap:8px;background:var(--menta-2);color:var(--verde-2);border-radius:var(--r-m);padding:10px 12px;margin-top:10px;font-size:.88rem;font-weight:600}
+.cupon-ok button{border:0;background:transparent;color:var(--verde-2);font-size:1.1rem;cursor:pointer;padding:0 4px}
+
+/* Listas */
+.lista{display:grid;gap:8px;margin-bottom:8px}
+.item{display:flex;justify-content:space-between;align-items:center;gap:10px;background:#F5F8F7;border-radius:var(--r-m);padding:12px 14px;font-size:.86rem}
+.item.toca{cursor:pointer}
+.item .cod{font-family:var(--display);font-weight:700;font-size:1rem;letter-spacing:.02em}
+.item .sub{font-size:.78rem;color:var(--gris);margin-top:1px}
+.estado{display:inline-flex;align-items:center;gap:6px;font-size:.8rem;font-weight:600;white-space:nowrap}
+.estado::before{content:'';width:8px;height:8px;border-radius:50%;background:currentColor}
+.e-pend{color:#C08410}.e-ok{color:var(--verde-2)}.e-no{color:var(--rojo)}.e-off{color:#8A99A5}
+.mas{color:var(--verde-2)}.menos{color:var(--rojo)}
+.num{font-family:var(--display);font-weight:700;font-size:1.05rem}
+.vacio{text-align:center;color:var(--gris);font-size:.88rem;padding:14px 0}
+.bloque{margin-top:24px}
+.bloque-top{display:flex;justify-content:space-between;align-items:baseline}
+details.mini{margin-top:14px;background:#F5F8F7;border-radius:var(--r-l);padding:0 16px}
+details.mini summary{cursor:pointer;list-style:none;padding:14px 0;font-family:var(--display);font-weight:600;font-size:1rem;display:flex;justify-content:space-between}
+details.mini summary::after{content:'+';color:var(--verde-2);font-size:1.3rem;line-height:1}
+details.mini[open] summary::after{content:'–'}
+details.mini summary::-webkit-details-marker{display:none}
+details.mini .cont{padding-bottom:14px}
+details.mini .item{background:var(--blanco)}
+.datos{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;font-size:.86rem;padding-bottom:14px}
+.datos dt{color:var(--gris)}
+
+/* Orden de pago */
+.orden{background:var(--menta);border-radius:var(--r-l);padding:20px;text-align:center;margin-bottom:14px}
+.orden .codigo{font-family:var(--display);font-weight:700;font-size:1.7rem;letter-spacing:.04em;line-height:1.1}
+.orden .det{font-size:.88rem;color:var(--tinta-2);margin-top:2px}
+.pago{text-align:center;padding:4px 0 6px}
+.pago .monto{font-family:var(--display);font-weight:700;font-size:2.3rem;line-height:1}
+.pago .yape{font-family:var(--display);font-weight:700;font-size:1.5rem;letter-spacing:.04em;margin:4px 0}
+.pago p{font-size:.86rem;color:var(--tinta-2);line-height:1.5}
+.copiar{display:flex;gap:8px;justify-content:center;margin:12px 0 4px}
+.copiar button{border:0;border-radius:999px;background:var(--tinta);color:#fff;padding:9px 16px;font-size:.84rem;font-weight:600;cursor:pointer}
+.copiar button+button{background:var(--menta);color:var(--tinta)}
+.plazo{font-size:.82rem;color:var(--gris);text-align:center;margin:10px 0 16px}
+a.btn{text-decoration:none}
+
+/* Modal */
+.velo{position:fixed;inset:0;background:rgba(14,42,71,.45);display:none;align-items:center;justify-content:center;padding:18px;z-index:9}
+.velo.on{display:flex}
+.modal{background:var(--blanco);border-radius:var(--r-xl);padding:22px 20px;max-width:380px;width:100%;text-align:center}
+.modal h3{font-family:var(--display);font-size:1.35rem;margin:4px 0 6px}
+.modal p{font-size:.9rem;color:var(--tinta-2);line-height:1.5;margin-bottom:16px}
+.modal .luki{margin:0 auto}
+@media (max-width:380px){.dos{grid-template-columns:1fr}.saldo{font-size:2.6rem}}
+/* ================= LUKI GOOL ================= */
+body{display:block;padding:0;background:var(--menta)}
+.app{max-width:480px;margin:0 auto;padding:12px 14px 40px}
+.top{padding:4px 2px 12px}
+.chip-in{border:0;background:var(--tinta);color:#fff;border-radius:999px;padding:9px 16px;font-family:var(--display);font-weight:600;font-size:.86rem;cursor:pointer}
+.chip-user{gap:6px}
+.chip-user b{font-family:var(--display);font-size:.95rem;transition:color .3s}
+.chip-user b.baja{color:var(--rojo)}
+.ball-mini{font-size:1rem;line-height:1}
+.card{padding:16px 16px 22px}
+.hero{position:relative;display:grid;grid-template-columns:auto 1fr;align-items:end;gap:4px;background:radial-gradient(120% 140% at 85% 0%,#1E4B7A 0%,#0E2A47 60%);color:#fff;border-radius:var(--r-l);padding:84px 16px 16px 4px;overflow:hidden}
+.hero::after{content:'';position:absolute;inset:auto -20% -60% auto;width:260px;height:260px;border-radius:50%;border:2px dashed rgba(79,214,166,.25)}
+.hero .luki{width:128px;height:136px;position:relative;z-index:1}
+.hero-bub{position:absolute;left:14px;right:14px;top:12px;background:rgba(255,255,255,.95);color:var(--tinta);font-size:.86rem;padding:9px 13px;max-width:none;border-radius:14px;z-index:2}
+.hero-bub::before{content:'';position:absolute;left:58px;bottom:-7px;border:8px solid transparent;border-top-color:rgba(255,255,255,.95);border-bottom:0}
+.hero-txt{position:relative;z-index:1;padding-bottom:4px}
+.tag-live{display:inline-flex;align-items:center;gap:6px;background:rgba(79,214,166,.16);color:#4FD6A6;border-radius:999px;padding:4px 11px;font-size:.76rem;font-weight:600}
+.hero p{font-size:.86rem;color:#C9D7E3;margin-top:6px;line-height:1.4}
+.sticker{display:flex;flex-direction:column;align-items:flex-start;margin:10px 0 6px;transform:rotate(-7deg);transform-origin:left center}
+.sticker span{display:inline-block;background:var(--st,#FF6B2C);color:#fff;font-family:'Rubik',var(--display);font-weight:900;text-transform:uppercase;line-height:.92;border-radius:7px;box-shadow:0 8px 18px -10px rgba(0,0,0,.6);animation:cae-st .55s cubic-bezier(.3,1.5,.5,1) both}
+.sticker .s1{font-size:1.05rem;padding:5px 9px 4px;position:relative;z-index:1;background:#fff;color:var(--tinta)}
+.sticker .s2{font-size:clamp(1.7rem,8vw,2.2rem);padding:6px 11px 5px;margin:-4px 0 0 18px;animation-delay:.12s}
+@keyframes cae-st{from{opacity:0;transform:translateY(-18px) scale(.9)}to{opacity:1;transform:none}}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0 2px}
+.chips span{background:var(--menta);border-radius:999px;padding:6px 11px;font-size:.78rem;color:var(--tinta-2)}
+.chips b{color:var(--tinta);font-family:var(--display);font-weight:600}
+.tabs3{display:grid;grid-template-columns:repeat(3,1fr);background:var(--menta);border-radius:999px;padding:4px;margin:16px 0 14px}
+.tabs3 button{border:0;background:transparent;border-radius:999px;padding:10px 4px;font-family:var(--display);font-weight:600;font-size:.88rem;color:var(--gris);cursor:pointer}
+.tabs3 button.on{background:#fff;color:var(--tinta);box-shadow:0 2px 8px -2px rgba(14,42,71,.2)}
+.vista{display:none}.vista.on{display:block;animation:entra .25s ease}
+.filtros{display:flex;gap:6px;margin-bottom:12px;overflow-x:auto}
+.filtros button{border:0;background:#F5F8F7;border-radius:999px;padding:7px 14px;font-weight:600;font-size:.82rem;color:var(--tinta-2);cursor:pointer;white-space:nowrap}
+.filtros button.on{background:var(--tinta);color:#fff}
+.dia{font-family:var(--display);font-weight:700;font-size:1rem;margin:14px 4px 8px}
+.match{display:block;width:100%;border:0;text-align:left;background:#fff;border-radius:22px;padding:14px;margin-bottom:10px;cursor:pointer;box-shadow:0 0 0 1.5px var(--linea);transition:box-shadow .15s,transform .15s;font:inherit;color:inherit}
+.match:hover{box-shadow:0 0 0 2px var(--verde);transform:translateY(-1px)}
+.m-top{display:flex;justify-content:space-between;align-items:center;font-size:.76rem;color:var(--gris);margin-bottom:10px}
+.liga{font-weight:700;color:var(--tinta-2)}
+.equipos{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:8px;text-align:center}
+.eq{display:flex;flex-direction:column;align-items:center;gap:5px;font-family:var(--display);font-weight:600;font-size:.92rem;line-height:1.15}
+.eq img,.eq .esc{width:38px;height:38px;object-fit:contain}
+.eq .esc{border-radius:50%;background:var(--menta);display:flex;align-items:center;justify-content:center;font-size:1.1rem}
+.vs{font-family:var(--display);font-weight:800;font-size:1.05rem;color:var(--gris)}
+.vs.res{font-size:1.5rem;color:var(--tinta)}
+.m-bot{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:12px;padding-top:10px;border-top:1px dashed var(--linea)}
+.m-bot small{display:block;font-size:.72rem;color:var(--gris)}
+.m-bot b{font-family:var(--display);font-variant-numeric:tabular-nums}
+.pill{border-radius:999px;padding:7px 14px;font-family:var(--display);font-weight:700;font-size:.86rem;white-space:nowrap}
+.p-ent{background:var(--verde);color:#fff}.p-in{background:var(--menta-2);color:var(--verde-2)}.p-cer{background:#EEF1F4;color:var(--gris)}.p-fin{background:var(--tinta);color:#fff}.p-can{background:#FCEDEB;color:var(--rojo)}.p-conf{background:#FFF4DB;color:#8A6100}
+.rojo{color:var(--rojo)}
+/* Sala */
+.sala-head{background:radial-gradient(120% 140% at 85% 0%,#1E4B7A 0%,#0E2A47 60%);color:#fff;border-radius:var(--r-l);padding:16px}
+.sala-head .m-top{color:#A9BCCD}.sala-head .liga{color:#fff}
+.sala-head .eq{color:#fff}
+.sala-head .vs{color:#A9BCCD}.sala-head .vs.res{color:#fff}
+.pozo{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-top:14px}
+.pozo div{background:rgba(255,255,255,.08);border-radius:14px;padding:8px 4px;text-align:center}
+.pozo small{display:block;font-size:.7rem;color:#A9BCCD}
+.pozo b{font-family:var(--display);font-size:1.05rem}
+.pozo-tot{text-align:center;font-size:.8rem;color:#C9D7E3;margin-top:8px}
+.pozo-tot b{color:#4FD6A6;font-family:var(--display)}
+.bloque{margin-top:18px}
+.bloque h3{font-family:var(--display);font-size:1.05rem;margin:0 0 8px 2px}
+.bloque .ayuda{margin-top:-4px;margin-bottom:8px}
+.marcador{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:8px;background:#F5F8F7;border-radius:20px;padding:12px}
+.step{display:flex;flex-direction:column;align-items:center;gap:6px}
+.step .nom{font-size:.8rem;font-weight:600;color:var(--tinta-2);text-align:center;line-height:1.15;min-height:2.2em;display:flex;align-items:center}
+.step .ctl{display:flex;align-items:center;gap:6px}
+.step button{width:38px;height:38px;border-radius:50%;border:0;background:#fff;font-size:1.3rem;font-weight:700;color:var(--tinta);cursor:pointer;box-shadow:0 2px 6px -3px rgba(14,42,71,.4)}
+.step .n{font-family:var(--display);font-weight:800;font-size:2.2rem;min-width:44px;text-align:center;font-variant-numeric:tabular-nums}
+.marcador .guion{font-family:var(--display);font-size:1.6rem;color:var(--gris);align-self:end;padding-bottom:10px}
+.opciones{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px}
+.opciones button{border:0;background:#F5F8F7;border-radius:14px;padding:11px 6px;font-weight:600;font-size:.84rem;cursor:pointer;color:var(--tinta);line-height:1.2}
+.opciones button.on{background:var(--tinta);color:#fff}
+.opciones button:disabled{opacity:.35;cursor:not-allowed}
+.dos-step{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.mini-step{background:#F5F8F7;border-radius:18px;padding:10px;text-align:center}
+.mini-step small{display:block;font-size:.8rem;font-weight:600;color:var(--tinta-2);margin-bottom:6px}
+.mini-step .ctl{display:flex;align-items:center;justify-content:center;gap:8px}
+.mini-step button{width:34px;height:34px;border-radius:50%;border:0;background:#fff;font-size:1.15rem;font-weight:700;cursor:pointer;box-shadow:0 2px 6px -3px rgba(14,42,71,.4)}
+.mini-step .n{font-family:var(--display);font-weight:800;font-size:1.6rem;min-width:34px}
+.puntos{display:grid;grid-template-columns:1fr auto;gap:4px 12px;font-size:.82rem;color:var(--tinta-2);background:var(--menta);border-radius:16px;padding:12px 14px}
+.puntos b{font-family:var(--display);color:var(--verde-2);text-align:right}
+.pagar-box{position:sticky;bottom:10px;margin-top:16px;background:#fff;border-radius:22px;padding:10px;box-shadow:0 14px 34px -14px rgba(14,42,71,.5);z-index:5}
+.pagar-box .saldo-l{display:flex;justify-content:space-between;font-size:.8rem;color:var(--gris);margin:0 6px 8px}
+.pagar-box .saldo-l b{color:var(--tinta);font-family:var(--display)}
+.ranking .item{background:#F5F8F7}
+.ranking .yo{box-shadow:inset 0 0 0 2px var(--verde)}
+.pos{width:30px;height:30px;border-radius:50%;background:var(--tinta);color:#fff;display:inline-flex;align-items:center;justify-content:center;font-family:var(--display);font-weight:700;font-size:.85rem;margin-right:8px;flex-shrink:0}
+.pos.p1{background:#F2B63D;color:#4A3200}.pos.p2{background:#C9D3DB;color:var(--tinta)}.pos.p3{background:#E3A27A;color:#5A2A00}
+.mio{background:var(--menta-2);border-radius:18px;padding:14px;margin-top:14px}
+.mio b{font-family:var(--display)}
+.gana{background:linear-gradient(120deg,#FFD978,#F2B63D);border-radius:20px;padding:16px;margin-top:14px;color:#3A2700;text-align:center}
+.gana h3{font-family:var(--display);font-size:1.3rem}
+.reglas{padding:0 4px 14px 20px;font-size:.86rem;line-height:1.55;color:var(--tinta-2)}
+.reglas li{margin-bottom:5px}
+.fila{display:flex;gap:8px}
+.fila input{flex:1;min-width:0;height:50px;border:1.5px solid transparent;background:#F5F8F7;border-radius:16px;padding:0 14px;font-size:1rem;text-transform:uppercase}
+.fila input:focus{outline:none;border-color:var(--verde)}
+.fila button{border:0;border-radius:16px;background:var(--tinta);color:#fff;padding:0 18px;font-weight:600;cursor:pointer}
+.menos5{position:fixed;left:50%;top:70px;transform:translateX(-50%);font-family:var(--display);font-weight:800;font-size:1.6rem;color:var(--rojo);opacity:0;pointer-events:none;z-index:30}
+.menos5.on{animation:menos 1.2s ease-out}
+@keyframes menos{0%{opacity:0;transform:translate(-50%,10px)}20%{opacity:1}100%{opacity:0;transform:translate(-50%,-30px)}}
+@media (prefers-reduced-motion:reduce){.sticker span{animation:none}}
+.ranking .item>div:last-child{white-space:nowrap;flex-shrink:0}
+</style>
+</head>
+<body>
+<template id="lukiTpl">
+<!-- Luki: el mismo dibujo de jakuna-web, separado en partes para animarlo -->
+<svg class="luki" viewBox="0 -20 300 320" aria-hidden="true">
+  <ellipse class="sombra" cx="150" cy="288" rx="92" ry="9" fill="#000" opacity=".18"/>
+  <g class="cuerpo"><g class="chispas" fill="#4FD6A6">
+      <path d="M30 70C32 86 36 90 52 92C36 94 32 98 30 114C28 98 24 94 8 92C24 90 28 86 30 70Z"/>
+      <path d="M266 40C267 52 270 55 282 56C270 57 267 60 266 72C265 60 262 57 250 56C262 55 265 52 266 40Z"/>
+      <circle cx="272" cy="150" r="7"/><circle cx="26" cy="170" r="6"/></g>
+      
+      <!-- patitas -->
+      <ellipse cx="98" cy="270" rx="28" ry="14" fill="#EDE3D6"/>
+      <ellipse cx="202" cy="270" rx="28" ry="14" fill="#EDE3D6"/>
+      <g class="oreja-i">
+        <ellipse cx="112" cy="62" rx="24" ry="64" fill="#FBF7F2" stroke="#EDE3D6" stroke-width="3" transform="rotate(-14 112 62)"/>
+        <ellipse cx="113" cy="66" rx="12" ry="46" fill="#F4A7A0" transform="rotate(-14 113 66)"/>
+      </g>
+      <g class="oreja-d">
+        <path d="M178 112 C176 60 190 18 214 16 C238 14 240 40 226 62 C214 82 200 100 196 116 Z" fill="#FBF7F2" stroke="#EDE3D6" stroke-width="3"/>
+        <path d="M188 104 C188 66 198 34 214 30 C228 28 226 46 218 60 C208 76 198 92 196 104 Z" fill="#F4A7A0"/>
+      </g>
+      <!-- cuerpo -->
+      <ellipse cx="150" cy="186" rx="104" ry="88" fill="#FBF7F2"/>
+      <ellipse cx="150" cy="186" rx="104" ry="88" fill="none" stroke="#EDE3D6" stroke-width="3"/>
+      <ellipse cx="150" cy="250" rx="70" ry="32" fill="#fff"/>
+      <g class="gorra">
+      <path d="M96 118 C96 68 204 68 204 118 Z" fill="#12A877"/>
+      <path d="M196 114 C224 108 248 112 254 120 C240 126 216 126 194 122 Z" fill="#0B7A55"/>
+      <rect x="94" y="112" width="112" height="10" rx="5" fill="#0B7A55"/>
+      <g transform="rotate(-10 150 94)">
+        <rect x="134" y="78" width="32" height="32" rx="8" fill="#0E2A47"/>
+        <text x="150" y="103" text-anchor="middle" font-family="Poppins,Arial,sans-serif" font-weight="700" font-size="24" fill="#fff">K</text>
+      </g>
+      </g><g class="ojos"><g class="pupilas">
+      <ellipse cx="118" cy="160" rx="13" ry="15" fill="#0E2A47"/>
+      <ellipse cx="182" cy="160" rx="13" ry="15" fill="#0E2A47"/>
+      <circle cx="123" cy="154" r="5" fill="#fff"/><circle cx="187" cy="154" r="5" fill="#fff"/>
+      <circle cx="114" cy="166" r="2.2" fill="#fff"/><circle cx="178" cy="166" r="2.2" fill="#fff"/>
+      </g></g><g class="mejillas">
+      <ellipse cx="96" cy="188" rx="15" ry="9" fill="#F4A7A0" opacity=".75"/>
+      <ellipse cx="204" cy="188" rx="15" ry="9" fill="#F4A7A0" opacity=".75"/>
+      </g><g class="nariz">
+        <path d="M142 177 Q150 172 158 177 Q154 185 150 186 Q146 185 142 177 Z" fill="#E07A80"/>
+      </g>
+      <g class="boca-feliz">
+      <path d="M150 186 v5 M150 191 c-4 6 -12 6 -14 0 M150 191 c4 6 12 6 14 0" stroke="#0E2A47" stroke-width="3" fill="none" stroke-linecap="round"/>
+      <rect x="143" y="194" width="7" height="9" rx="2" fill="#fff" stroke="#DCE3E8" stroke-width="1.5"/>
+      <rect x="150" y="194" width="7" height="9" rx="2" fill="#fff" stroke="#DCE3E8" stroke-width="1.5"/>
+      </g><path class="boca-triste" d="M150 186 v4 M136 200 q14 -12 28 0" stroke="#0E2A47" stroke-width="3" fill="none" stroke-linecap="round"/>
+      <g stroke="#0E2A47" stroke-width="2" stroke-linecap="round" opacity=".45">
+        <path d="M122 184 L86 178"/><path d="M122 190 L86 194"/>
+        <path d="M178 184 L214 178"/><path d="M178 190 L214 194"/>
+      </g>
+      <g class="bolilla">
+      <circle cx="150" cy="242" r="32" fill="#0E2A47" stroke="#4FD6A6" stroke-width="6"/>
+      <circle cx="140" cy="230" r="6" fill="#fff" opacity=".25"/>
+      <text x="150" y="254" text-anchor="middle" font-family="Poppins,Arial,sans-serif" font-weight="700" font-size="32" fill="#fff">7</text>
+      </g>
+      <ellipse cx="116" cy="238" rx="15" ry="12" fill="#FBF7F2" stroke="#EDE3D6" stroke-width="2"/>
+      <g class="brazo-d"><ellipse cx="184" cy="238" rx="15" ry="12" fill="#FBF7F2" stroke="#EDE3D6" stroke-width="2"/></g>
+    <g class="puntos" fill="#0E2A47"><circle cx="244" cy="96" r="8"/><circle cx="266" cy="76" r="8"/><circle cx="288" cy="56" r="8"/></g></g>
+</svg>
+</template>
+<div class="app">
+  <header class="top">
+    <a class="marca" href="https://jakunastoreperu-sudo.github.io/jakuna-web/">jak<b>u</b>na</a>
+    <button type="button" class="chip-in" id="chipIn" onclick="pedirCuenta()">Ingresar</button>
+    <div class="chip-user" id="chipUser">
+      <span class="ball-mini">⚽</span><b id="chipSaldo">0</b><span id="chipNombre">@</span>
+      <button type="button" onclick="salir()">Salir</button>
+    </div>
+  </header>
+  <span class="menos5" id="menos5">-5 ⚽</span>
+
+  <!-- ============ INICIO ============ -->
+  <section class="screen on" id="sInicio">
+    <div class="hero">
+      <div class="hero-bub bocadillo" id="bHero">¡Habla causa! Pronostica el partido y gánale a todos en tu sala.</div>
+      <span data-luki="hero"></span>
+      <div class="hero-txt">
+        <span class="tag-live">⚽ Liga 1 y Champions</span>
+        <div class="sticker"><span class="s1">Luki</span><span class="s2">Gool</span></div>
+        <p>Una sala por partido. Entras con 5 Golcitos y el mejor pronóstico se lleva el 40% del pozo.</p>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:12px">
+      <div class="chips">
+        <span>Entrada <b>5 ⚽</b> (S/ 5)</span><span>1.º <b>40%</b></span><span>2.º <b>25%</b></span><span>3.º <b>5%</b></span>
+      </div>
+      <div class="tabs3" role="tablist">
+        <button type="button" class="on" id="t-partidos" onclick="verVista('partidos')">Partidos</button>
+        <button type="button" id="t-mias" onclick="verVista('mias')">Mis salas</button>
+        <button type="button" id="t-ticket" onclick="verVista('ticket')">Mi ticket</button>
+      </div>
+
+      <div class="vista on" id="v-partidos">
+        <div class="filtros" id="filtros">
+          <button type="button" class="on" data-f="">Todos</button>
+          <button type="button" data-f="Liga 1">Liga 1</button>
+          <button type="button" data-f="Champions League">Champions</button>
+        </div>
+        <div id="listaSalas"><div class="vacio">Cargando partidos…</div></div>
+      </div>
+
+      <div class="vista" id="v-mias">
+        <div id="miasOff" class="vacio">Ingresa con tu cuenta para ver tus salas.<br><button type="button" class="btn" style="margin-top:12px" onclick="pedirCuenta()">Ingresar</button></div>
+        <div id="listaMias" class="lista"></div>
+      </div>
+
+      <div class="vista" id="v-ticket">
+        <form class="fila" onsubmit="consultar(event)">
+          <input id="tkCodigo" placeholder="LGT-XXXXXX" autocapitalize="characters" aria-label="Código de ticket">
+          <button>Consultar</button>
+        </form>
+        <div class="msg" id="mTk" style="margin-top:10px"></div>
+        <div id="tkRes"></div>
+      </div>
+
+      <details class="bloque">
+        <summary style="cursor:pointer;font-family:var(--display);font-weight:700;padding:4px 2px 10px">Cómo se juega y cómo cobras</summary>
+        <ol class="reglas">
+          <li>Cada partido tiene su sala. Entras con <b>5 Golcitos</b> (1 Golcito = S/ 1) y dejas tu pronóstico. Una entrada por cuenta en cada sala.</li>
+          <li>La sala cierra <b>5 minutos antes</b> del pitazo. Hasta entonces nadie ve los pronósticos de los demás.</li>
+          <li>Se necesitan al menos <b>5 jugadores</b>. Si no se llega, o el partido se posterga o cancela, te devolvemos tus Golcitos.</li>
+          <li>Cuenta solo el tiempo reglamentario (90 minutos más descuento). Los datos oficiales salen de API-Football.</li>
+          <li>Premios del pozo: 1.º 40%, 2.º 25%, 3.º 5%. Si hay empate en puntos, se reparten en partes iguales.</li>
+          <li>Si ganas, reclama tu premio por WhatsApp con tu código de ticket. Te pagamos por Yape.</li>
+          <li>Solo mayores de 18 años. Juega con responsabilidad.</li>
+        </ol>
+        <div class="puntos" id="tablaPuntos"></div>
+      </details>
+    </div>
+  </section>
+
+  <!-- ============ SALA ============ -->
+  <section class="screen" id="sSala">
+    <button type="button" class="link" style="margin:0 0 10px 4px" onclick="volverLista()">← Todos los partidos</button>
+    <div class="sala-head" id="salaHead"></div>
+    <div class="card" style="margin-top:12px" id="salaCuerpo"></div>
+  </section>
+
+  <!-- ============ CUENTA ============ -->
+  <section class="screen" id="sCuenta">
+    <button type="button" class="link" style="margin:0 0 10px 4px" onclick="volverDeCuenta()">← Volver</button>
+    <div class="card">
+      <div class="stage"><span data-luki="cuenta" data-size="sm"></span><div class="bocadillo">Tu cuenta Jakuna es la misma de Luca Express y A una Luca.</div></div>
+      <div style="margin-top:14px">
+<div id="lukOff">
+          <p class="lead">Ingresa con tu cuenta Jakuna (la misma de Luca Express y A una Luca) para jugar con tus Golcitos.</p>
+          <div class="seg" id="segAuth"><button type="button" class="on" id="tLogin" onclick="verTab('login')">Ingresar</button><button type="button" id="tReg" onclick="verTab('reg')">Crear cuenta</button></div>
+
+          <form id="fLogin" onsubmit="ingresar(event)">
+            <div class="msg" id="mLogin"></div>
+            <div class="campo"><label for="lgId">Usuario o correo</label><input id="lgId" autocomplete="username" autocapitalize="none" placeholder="tu_usuario"></div>
+            <div class="campo"><label for="lgPass">Contraseña</label><div class="pass"><input type="password" id="lgPass" autocomplete="current-password" placeholder="Tu contraseña"><button type="button" class="ojo" onclick="verPass('lgPass',this)">Ver</button></div></div>
+            <div class="enlaces"><button type="button" class="link" onclick="verTab('olvide','usuario')">Olvidé mi usuario</button><button type="button" class="link" onclick="verTab('olvide','contrasena')">Olvidé mi contraseña</button></div>
+            <button class="btn" id="bLogin">Ingresar</button>
+          </form>
+
+          <form id="fReg" onsubmit="registrarse(event)" style="display:none">
+            <div class="msg" id="mReg"></div>
+            <div class="dos">
+              <div class="campo"><label for="rgNombre">Nombre</label><input id="rgNombre" autocomplete="given-name" placeholder="Rosa"></div>
+              <div class="campo"><label for="rgApellido">Apellido</label><input id="rgApellido" autocomplete="family-name" placeholder="Quispe"></div>
+            </div>
+            <div class="campo"><label for="rgCorreo">Correo</label><input type="email" id="rgCorreo" autocomplete="email" autocapitalize="none" placeholder="tucorreo@gmail.com"><div class="ayuda">Aquí te llega tu código de seguridad. Una cuenta por correo.</div></div>
+            <div class="campo"><label for="rgCelular">Celular</label><div class="tel"><select id="rgPais" onchange="cambioPais()" aria-label="País"></select><input type="tel" id="rgCelular" inputmode="numeric" autocomplete="tel-national" placeholder="987654321"></div></div>
+            <div class="campo"><label for="rgUsuario">Crea tu usuario</label><input id="rgUsuario" autocomplete="username" autocapitalize="none" maxlength="20" placeholder="rosaquispe"><div class="ayuda">De 4 a 20 caracteres: letras, números, punto o guion bajo.</div></div>
+            <div class="dos">
+              <div class="campo"><label for="rgPass">Contraseña</label><div class="pass"><input type="password" id="rgPass" autocomplete="new-password" placeholder="Mínimo 6"><button type="button" class="ojo" onclick="verPass('rgPass',this)">Ver</button></div></div>
+              <div class="campo"><label for="rgPass2">Repítela</label><input type="password" id="rgPass2" autocomplete="new-password" placeholder="Igual a la anterior"></div>
+            </div>
+            <div class="campo"><label for="rgRef">Código de referido <span style="font-weight:400;color:var(--gris)">(opcional)</span></label><input id="rgRef" autocapitalize="characters" placeholder="Si alguien te invitó" style="text-transform:uppercase"></div>
+            <label class="check"><input type="checkbox" id="rgEdad"><span>Soy mayor de 18 años y acepto las reglas de los juegos Jakuna.</span></label>
+            <button class="btn" id="bReg">Crear mi cuenta</button>
+          </form>
+
+          <form id="fOlv" onsubmit="recuperar(event)" style="display:none">
+            <div class="seg"><button type="button" id="tOU" onclick="verTab('olvide','usuario')">Mi usuario</button><button type="button" id="tOP" onclick="verTab('olvide','contrasena')">Mi contraseña</button></div>
+            <div class="nota">📩 Revisa en tu correo registrado el mensaje con asunto <b>"<span class="asunto"></span>"</b>, ubica el código que empieza con <b>JK-</b> e ingrésalo aquí. Si ya cambiaste tu contraseña antes, usa el correo más reciente. Mira también en Spam.</div>
+            <div class="msg" id="mOlv"></div>
+            <div class="campo"><label for="fgCodigo">Código de seguridad</label><input id="fgCodigo" autocapitalize="characters" placeholder="JK-XXXX-XXXX" style="text-transform:uppercase;letter-spacing:.08em;font-weight:600"></div>
+            <div id="fgPassBox" class="dos" style="display:none">
+              <div class="campo"><label for="fgPass">Nueva contraseña</label><div class="pass"><input type="password" id="fgPass" autocomplete="new-password" placeholder="Mínimo 6"><button type="button" class="ojo" onclick="verPass('fgPass',this)">Ver</button></div></div>
+              <div class="campo"><label for="fgPass2">Repítela</label><input type="password" id="fgPass2" autocomplete="new-password" placeholder="Igual a la anterior"></div>
+            </div>
+            <button class="btn" id="bOlv">Enviarme mi usuario</button>
+            <button type="button" class="btn sec" onclick="verTab('login')">Volver a ingresar</button>
+          </form>
+</div>
+      </div>
+    </div>
+  </section>
+
+  <p style="text-align:center;font-size:.76rem;color:var(--gris);margin-top:18px">+18 · Jakuna Perú · <a class="link" href="https://jakunastoreperu-sudo.github.io/login/">Mi cuenta</a></p>
+</div>
+
+<div class="velo" id="velo"><div class="modal">
+  <span data-luki="modal"></span>
+  <h3 id="mdT">-</h3><p id="mdX">-</p>
+  <button type="button" class="btn" onclick="$('velo').classList.remove('on')">Entendido</button>
+</div></div>
+
+<script>
+/* ================== LUKI GOOL ================== */
+const API_GOOL = 'https://script.google.com/macros/s/AKfycbysrSX5HfCSJVgQagAypzgBVC13DmLRLgICQR-LQQaampL79OM4OgGFqRSpHkHPZe0V/exec';
+const API_CUENTAS = 'https://script.google.com/macros/s/AKfycbxI1tlMoo_VMD8FM6yHYpvXU2wF9awQOepIy-0oxVLGTaTN8HSAYSAzbd1zCdDrWXXX/exec';
+const PAGINA_CUENTA = 'https://jakunastoreperu-sudo.github.io/login/';
+const ASUNTO_CODIGO = "Jakuna · Tu código de seguridad";
+const ENTRADA = 5;
+const PAISES = [["PE","Perú","51"],["AR","Argentina","54"],["BO","Bolivia","591"],["BR","Brasil","55"],["CL","Chile","56"],["CO","Colombia","57"],["CR","Costa Rica","506"],["EC","Ecuador","593"],["ES","España","34"],["US","Estados Unidos","1"],["IT","Italia","39"],["MX","México","52"],["PA","Panamá","507"],["PY","Paraguay","595"],["DO","Rep. Dominicana","1"],["UY","Uruguay","598"],["VE","Venezuela","58"],["OT","Otro país",""]];
+const GOOL_OK = /^https:\/\/script\.google\.com\//.test(API_GOOL);
+const CTA_OK = /^https:\/\/script\.google\.com\//.test(API_CUENTAS);
+const AQUI = location.href.split('#')[0].split('?')[0];
+const URL_RECARGA = `${PAGINA_CUENTA}?volver=${encodeURIComponent(AQUI)}&juego=${encodeURIComponent('Luki Gool')}&moneda=golcitos`;
+
+/* ---------- utilidades ---------- */
+function $(id) { return document.getElementById(id); }
+function esc(t) { return String(t == null ? '' : t).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); }
+function msg(id, t, tipo = 'err') { const m = $(id); m.className = 'msg' + (t ? ' ' + tipo : ''); m.innerHTML = t ? esc(t) : ''; }
+function ocupado(b, si, t) { b.disabled = si; if (t != null) b.innerHTML = t; }
+function ir(id) { document.querySelectorAll('.screen').forEach(s => s.classList.remove('on')); $(id).classList.add('on'); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+function verPass(id, b) { const i = $(id); i.type = i.type === 'password' ? 'text' : 'password'; b.innerText = i.type === 'password' ? 'Ver' : 'Ocultar'; }
+function modal(t, x, e = 'fiesta') { $('mdT').innerText = t; $('mdX').innerHTML = x; $('velo').classList.add('on'); luki('modal', e); }
+function copiar(t) { const ok = () => luki('modal', 'fiesta'); if (navigator.clipboard) navigator.clipboard.writeText(t).then(ok).catch(() => prompt('Copia:', t)); else prompt('Copia:', t); }
+function soles(n) { return 'S/ ' + Number(n || 0).toFixed(2); }
+
+/* ---------- Luki ---------- */
+document.querySelectorAll('[data-luki]').forEach(el => {
+  const svg = $('lukiTpl').content.firstElementChild.cloneNode(true);
+  if (el.dataset.size) svg.classList.add(el.dataset.size);
+  svg.dataset.luki = el.dataset.luki; el.replaceWith(svg);
+});
+const lt = {};
+function luki(donde, estado, texto) {
+  const el = document.querySelector(`svg[data-luki="${donde}"]`);
+  if (el) {
+    el.classList.remove('saluda', 'piensa', 'fiesta', 'triste'); void el.getBoundingClientRect();
+    if (estado) el.classList.add(estado);
+    clearTimeout(lt[donde]);
+    if (estado && estado !== 'piensa') lt[donde] = setTimeout(() => el.classList.remove(estado), estado === 'triste' ? 4000 : 2600);
+  }
+  if (donde === 'hero' && texto) $('bHero').innerText = texto;
+}
+
+/* ---------- hora de Perú ---------- */
+const LIMA = 5 * 3600000;
+function msDe(txt) { return Date.parse(String(txt).replace(' ', 'T').slice(0, 19) + 'Z') + LIMA; }
+function limaDe(ms) { return new Date(ms - LIMA); }
+function isoDia(ms) { return limaDe(ms).toISOString().slice(0, 10); }
+function horaTxt(ms) { const d = limaDe(ms), h = d.getUTCHours(), m = d.getUTCMinutes(); return `${((h + 11) % 12) + 1}:${String(m).padStart(2, '0')} ${h >= 12 ? 'p. m.' : 'a. m.'}`; }
+function diaTxt(ms) {
+  const d = isoDia(ms), hoy = isoDia(Date.now());
+  if (d === hoy) return 'Hoy'; if (d === isoDia(Date.now() + 864e5)) return 'Mañana'; if (d === isoDia(Date.now() - 864e5)) return 'Ayer';
+  const t = limaDe(ms).toLocaleDateString('es-PE', { weekday: 'long', day: 'numeric', month: 'long', timeZone: 'UTC' });
+  return t.charAt(0).toUpperCase() + t.slice(1);
+}
+function falta(ms) {
+  const s = Math.max(0, Math.floor((ms - Date.now()) / 1000)), d = Math.floor(s / 86400), h = Math.floor(s % 86400 / 3600), m = Math.floor(s % 3600 / 60);
+  if (d) return `${d} d ${h} h`; if (h) return `${h} h ${m} min`; if (m) return `${m} min ${String(s % 60).padStart(2, '0')} s`; return `${s % 60} s`;
+}
+
+/* ---------- APIs ---------- */
+let token = (() => { try { return localStorage.getItem('jk_token'); } catch (e) { return null; } })();
+let perfil = null;
+async function apiCuentas(accion, data = {}) {
+  if (!CTA_OK) throw new Error('Falta conectar Jakuna Cuentas.');
+  const r = await fetch(API_CUENTAS, { method: 'POST', body: JSON.stringify({ accion, token, ...data }) });
+  const j = await r.json();
+  if (!j.ok && j.error === 'SESION') { cerrarSesion(); throw new Error('Tu sesión expiró. Ingresa de nuevo.'); }
+  if (!j.ok) throw new Error(j.error || 'Ocurrió un error.');
+  return j;
+}
+async function golGet(params) {
+  if (!GOOL_OK) throw new Error('Luki Gool todavía no está conectado.');
+  const r = await fetch(API_GOOL + '?' + new URLSearchParams(params)); return r.json();
+}
+async function golPost(data) {
+  if (!GOOL_OK) throw new Error('Luki Gool todavía no está conectado.');
+  const r = await fetch(API_GOOL, { method: 'POST', body: JSON.stringify({ token, ...data }) }); return r.json();
+}
+function guardarToken(t) { token = t; try { t ? localStorage.setItem('jk_token', t) : localStorage.removeItem('jk_token'); } catch (e) {} }
+
+/* ---------- sesión ---------- */
+function contar(el, hasta) {
+  const desde = Number(el.innerText) || 0;
+  if (desde === hasta || matchMedia('(prefers-reduced-motion: reduce)').matches) { el.innerText = hasta; return; }
+  const t0 = performance.now(); (function p(t) { const k = Math.min(1, (t - t0) / 650); el.innerText = Math.round(desde + (hasta - desde) * (1 - Math.pow(1 - k, 3))); if (k < 1) requestAnimationFrame(p); })(t0);
+}
+function ponerSaldo(g, gasto) {
+  if (!perfil) return;
+  perfil.saldoGolcitos = g; contar($('chipSaldo'), g);
+  if (gasto) { const m = $('menos5'); m.classList.remove('on'); void m.offsetWidth; m.classList.add('on'); $('chipSaldo').classList.add('baja'); setTimeout(() => $('chipSaldo').classList.remove('baja'), 1200); }
+}
+let trasLogin = null;
+function entrar(p, nuevo) {
+  perfil = p;
+  $('chipIn').style.display = 'none'; $('chipUser').style.display = 'flex'; $('chipNombre').innerText = '@' + p.usuario;
+  $('chipSaldo').innerText = '0'; ponerSaldo(p.saldoGolcitos || 0);
+  if (nuevo !== false) luki('hero', 'saluda', (p.saldoGolcitos || 0) >= ENTRADA ? `¡Hola, ${p.nombre}! Tienes ${p.saldoGolcitos} Golcitos. Elige tu partido.` : `¡Hola, ${p.nombre}! Recarga Golcitos y entra a una sala.`);
+  cargarMias();
+  if ($('sCuenta').classList.contains('on')) { const f = trasLogin; trasLogin = null; f ? f() : ir('sInicio'); }
+}
+function cerrarSesion() {
+  guardarToken(null); perfil = null; misSalasIds = {};
+  $('chipIn').style.display = 'inline-block'; $('chipUser').style.display = 'none';
+  pintarMias([]); verTab('login');
+}
+function salir() { cerrarSesion(); luki('hero', 'saluda', '¡Vuelve pronto! Aquí te espero.'); if (salaActual) pintarSala(); }
+let antesDeCuenta = 'sInicio';
+function pedirCuenta(despues) {
+  trasLogin = despues || null;
+  antesDeCuenta = document.querySelector('.screen.on').id;
+  verTab('login'); ir('sCuenta'); luki('cuenta', 'saluda');
+}
+function volverDeCuenta() { trasLogin = null; ir(antesDeCuenta); }
+function cambioPais() { $('rgCelular').placeholder = $('rgPais').value === 'PE' ? '987654321' : 'Sin el prefijo'; }
+
+let modoOlv = 'usuario';
+function verTab(t, sub) {
+  $('tLogin').classList.toggle('on', t === 'login'); $('tReg').classList.toggle('on', t === 'reg');
+  $('segAuth').style.display = t === 'olvide' ? 'none' : 'grid';
+  $('fLogin').style.display = t === 'login' ? 'block' : 'none'; $('fReg').style.display = t === 'reg' ? 'block' : 'none'; $('fOlv').style.display = t === 'olvide' ? 'block' : 'none';
+  if (t === 'olvide') { modoOlv = sub; msg('mOlv'); $('tOU').classList.toggle('on', sub === 'usuario'); $('tOP').classList.toggle('on', sub === 'contrasena');
+    $('fgPassBox').style.display = sub === 'contrasena' ? 'grid' : 'none'; $('bOlv').innerText = sub === 'usuario' ? 'Enviarme mi usuario' : 'Cambiar mi contraseña'; }
+}
+async function ingresar(ev) {
+  ev.preventDefault(); msg('mLogin'); const b = $('bLogin'); ocupado(b, true, 'Entrando…'); luki('hero', 'piensa');
+  try { const r = await apiCuentas('login', { identificador: $('lgId').value.trim(), contrasena: $('lgPass').value }); guardarToken(r.token); $('lgPass').value = ''; entrar(r.perfil); }
+  catch (e) { msg('mLogin', e.message); luki('hero', 'triste'); }
+  ocupado(b, false, 'Ingresar y jugar');
+}
+async function registrarse(ev) {
+  ev.preventDefault(); msg('mReg');
+  const d = { nombre: $('rgNombre').value.trim(), apellido: $('rgApellido').value.trim(), correo: $('rgCorreo').value.trim(), pais: $('rgPais').value,
+    celular: $('rgCelular').value.replace(/\D/g, ''), usuario: $('rgUsuario').value.trim().toLowerCase(), contrasena: $('rgPass').value, referido: $('rgRef').value.trim(), mayorEdad: $('rgEdad').checked };
+  const err = d.nombre.length < 2 || d.apellido.length < 2 ? 'Escribe tu nombre y apellido.' : !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(d.correo) ? 'Revisa tu correo, parece incompleto.'
+    : (d.pais === 'PE' ? !/^9\d{8}$/.test(d.celular) : !/^\d{6,15}$/.test(d.celular)) ? 'Revisa tu número de celular.'
+    : !/^[a-z0-9._]{4,20}$/.test(d.usuario) ? 'Tu usuario debe tener de 4 a 20 caracteres: letras, números, punto o guion bajo.'
+    : d.contrasena.length < 6 ? 'Tu contraseña necesita al menos 6 caracteres.' : d.contrasena !== $('rgPass2').value ? 'Las contraseñas no coinciden.'
+    : !d.mayorEdad ? 'Debes confirmar que eres mayor de 18 años.' : '';
+  if (err) { luki('hero', 'triste'); return msg('mReg', err); }
+  const b = $('bReg'); ocupado(b, true, 'Creando tu cuenta…'); luki('hero', 'piensa');
+  try {
+    const r = await apiCuentas('registrar', d); guardarToken(r.token); $('fReg').reset(); $('rgPais').value = 'PE'; entrar(r.perfil, false);
+    modal(`¡Ya eres parte de Jakuna, ${esc(r.perfil.nombre)}!`, (r.correoEnviado ? `Te mandé a <b>${esc(r.perfil.correo)}</b> tu código de seguridad (asunto <b>"${esc(ASUNTO_CODIGO)}"</b>). Guárdalo. ` : '')
+      + `Para entrar a las salas necesitas Golcitos (1 = S/ 1). <a href="${URL_RECARGA}">Recarga aquí</a> y vuelves con un toque.`);
+  } catch (e) { msg('mReg', e.message); luki('hero', 'triste'); }
+  ocupado(b, false, 'Crear mi cuenta');
+}
+async function recuperar(ev) {
+  ev.preventDefault(); msg('mOlv'); const codigo = $('fgCodigo').value.trim();
+  if (!codigo) return msg('mOlv', 'Escribe tu código de seguridad.');
+  const b = $('bOlv'), txt = b.innerText; luki('hero', 'piensa');
+  try {
+    if (modoOlv === 'usuario') { ocupado(b, true, 'Buscando…'); const r = await apiCuentas('olvideUsuario', { codigo }); msg('mOlv', `Listo. Te envié tu usuario a ${r.correo}.`, 'ok'); }
+    else {
+      const p = $('fgPass').value; if (p.length < 6) throw new Error('Tu nueva contraseña necesita al menos 6 caracteres.'); if (p !== $('fgPass2').value) throw new Error('Las contraseñas no coinciden.');
+      ocupado(b, true, 'Cambiando…'); const r = await apiCuentas('olvideContrasena', { codigo, nueva: p });
+      $('fgPass').value = $('fgPass2').value = $('fgCodigo').value = '';
+      msg('mOlv', `Listo, ya cambiaste tu contraseña. Te envié un código nuevo a ${r.correo}. Ahora ingresa.`, 'ok');
+    }
+    luki('hero', 'fiesta');
+  } catch (e) { msg('mOlv', e.message); luki('hero', 'triste'); }
+  ocupado(b, false, txt);
+}
+
+
+
+/* ---------- vistas ---------- */
+function verVista(v) {
+  ['partidos', 'mias', 'ticket'].forEach(x => { $('t-' + x).classList.toggle('on', x === v); $('v-' + x).classList.toggle('on', x === v); });
+  if (v === 'mias') cargarMias();
+}
+
+/* ---------- lista de salas ---------- */
+let salas = [], reglas = null, filtro = '', misSalasIds = {};
+function escudo(url, nombre) { return url ? `<img src="${esc(url)}" alt="" loading="lazy">` : `<span class="esc" aria-hidden="true">⚽</span>`; }
+function abierta(s) { return s.estado === 'ABIERTA' && msDe(s.cierre) > Date.now(); }
+function estadoPill(s) {
+  if (abierta(s)) return misSalasIds[s.id] ? '<span class="pill p-in">Ya estás ✓</span>' : `<span class="pill p-ent">Entrar · ${s.entrada} ⚽</span>`;
+  return { CERRADA: '<span class="pill p-cer">En juego</span>', ABIERTA: '<span class="pill p-cer">Cerrada</span>', 'POR CONFIRMAR': '<span class="pill p-conf">Confirmando</span>',
+    FINALIZADA: '<span class="pill p-fin">Ver ranking</span>', CANCELADA: '<span class="pill p-can">Cancelada</span>' }[s.estado] || `<span class="pill p-cer">${esc(s.estado)}</span>`;
+}
+function infoAbajo(s) {
+  if (abierta(s)) return `<div><small>Cierra en</small><b data-cierre="${msDe(s.cierre)}">${falta(msDe(s.cierre))}</b></div>`;
+  if (s.estado === 'CANCELADA') return `<div><small>Entradas devueltas</small><b>${s.jugadores} jugadores</b></div>`;
+  return `<div><small>Pozo final</small><b>${soles(s.pozo)}</b></div>`;
+}
+function tarjeta(s) {
+  const ini = msDe(s.inicio);
+  return `<button type="button" class="match" onclick="abrirSala('${esc(s.id)}')">
+    <div class="m-top"><span class="liga">${esc(s.liga)}</span><span>${horaTxt(ini)}</span></div>
+    <div class="equipos">
+      <div class="eq">${escudo(s.logoLocal)}<span>${esc(s.local || s.partido.split(' vs ')[0])}</span></div>
+      <div class="vs${s.resultado ? ' res' : ''}">${s.resultado ? esc(s.resultado) : 'vs'}</div>
+      <div class="eq">${escudo(s.logoVisita)}<span>${esc(s.visita || s.partido.split(' vs ')[1] || '')}</span></div>
+    </div>
+    <div class="m-bot">${infoAbajo(s)}<div><small>Jugadores · pozo</small><b>${s.jugadores} · ${soles(s.pozo)}</b></div>${estadoPill(s)}</div>
+  </button>`;
+}
+function pintarSalas() {
+  const l = salas.filter(s => !filtro || s.liga === filtro);
+  if (!l.length) { $('listaSalas').innerHTML = `<div class="vacio">${salas.length ? 'No hay partidos de esta liga por ahora.' : 'Todavía no hay partidos programados. Vuelve pronto.'}</div>`; return; }
+  // primero las abiertas (por hora), luego las demás (más recientes primero)
+  const ab = l.filter(abierta), otras = l.filter(s => !abierta(s)).reverse();
+  let html = '', dia = '';
+  ab.forEach(s => { const d = diaTxt(msDe(s.inicio)); if (d !== dia) { html += `<div class="dia">${d}</div>`; dia = d; } html += tarjeta(s); });
+  if (otras.length) html += `<div class="dia">Jugados y en juego</div>` + otras.map(tarjeta).join('');
+  $('listaSalas').innerHTML = html;
+}
+async function cargarSalas() {
+  try {
+    const r = await golGet({});
+    if (!r.ok) throw new Error(r.error);
+    salas = r.salas; reglas = r.reglas; pintarSalas(); pintarPuntos();
+  } catch (e) { if (!salas.length) $('listaSalas').innerHTML = `<div class="vacio">${esc(e.message || 'No pudimos cargar los partidos.')} Revisa tu conexión.</div>`; }
+}
+document.querySelectorAll('#filtros button').forEach(b => b.onclick = () => {
+  filtro = b.dataset.f; document.querySelectorAll('#filtros button').forEach(x => x.classList.toggle('on', x === b)); pintarSalas();
+});
+function pintarPuntos() {
+  const P = (reglas && reglas.puntos) || { exacto: 10, resultado: 4, totalGoles: 3, primerGol: 3, goleador: 5, amarillasExacto: 3, amarillasCerca: 2, cornersExacto: 3, cornersCerca: 2 };
+  $('tablaPuntos').innerHTML = [['Marcador exacto', P.exacto], ['Aciertas quién gana o el empate', P.resultado], ['Total de goles (si no fue exacto)', P.totalGoles],
+    ['Quién marca primero', P.primerGol], ['Tu goleador anota', P.goleador], ['Amarillas exactas · a 1 de distancia', `${P.amarillasExacto} · ${P.amarillasCerca}`],
+    ['Córners exactos · a 2 de distancia', `${P.cornersExacto} · ${P.cornersCerca}`]].map(([a, b]) => `<span>${a}</span><b>+${b}</b>`).join('');
+}
+
+/* ---------- mis salas ---------- */
+let mias = [], waAdmin = '51955480091';
+async function cargarMias() {
+  $('miasOff').style.display = perfil ? 'none' : 'block';
+  if (!perfil || !GOOL_OK) return;
+  try { const r = await golPost({ accion: 'misSalas' }); if (r.ok) { waAdmin = r.whatsapp || waAdmin; pintarMias(r.lista); } else if (r.error === 'SESION') cerrarSesion(); } catch (e) {}
+}
+function pintarMias(lista) {
+  mias = lista; misSalasIds = {}; lista.forEach(t => { if (t.sala && t.estado !== 'DEVUELTO') misSalasIds[t.sala.id] = t; });
+  $('miasOff').style.display = perfil ? 'none' : 'block';
+  $('listaMias').innerHTML = !perfil ? '' : !lista.length ? '<div class="vacio">Aún no entras a ninguna sala. Elige un partido en la pestaña Partidos.</div>'
+    : lista.map(t => `<div class="item toca" onclick="${t.sala ? `abrirSala('${esc(t.sala.id)}')` : ''}">
+        <div><div class="cod">${esc(t.sala ? t.sala.partido : t.ticket)}</div>
+        <div class="sub">${esc(t.ticket)} · Tu pronóstico ${esc(t.pronostico.gl)}-${esc(t.pronostico.gv)}${t.puntos != null ? ` · <b>${t.puntos} pts</b>` : ''}</div></div>
+        ${estadoTicket(t)}</div>`).join('');
+  if (salas.length) pintarSalas();
+}
+function estadoTicket(t) {
+  if (t.estado === 'GANADOR') return `<span class="estado e-ok">${t.premioPagado ? 'Pagado' : 'Ganaste ' + soles(t.premio)}</span>`;
+  if (t.estado.indexOf('GANADOR') === 0) return `<span class="estado e-pend">Confirmando</span>`;
+  if (t.estado === 'DEVUELTO') return `<span class="estado e-off">Devuelto</span>`;
+  if (t.estado === 'JUGADO') return `<span class="estado e-off">${t.puesto ? t.puesto + '.º' : 'Jugado'}</span>`;
+  return `<span class="estado e-pend">En juego</span>`;
+}
+function linkReclamo(t) {
+  const txt = `Hola Jakuna, gané en Luki Gool 🏆\nTicket: ${t.ticket}\nPartido: ${t.sala ? t.sala.partido : ''}\nPuesto: ${t.puesto}.º · Premio: ${soles(t.premio)}\nMi usuario: @${perfil ? perfil.usuario : ''}\nMi Yape: `;
+  return `https://wa.me/${waAdmin}?text=${encodeURIComponent(txt)}`;
+}
+function cajaPremio(t) {
+  if (t.estado === 'GANADOR' && t.premioPagado) return `<div class="mio">🏆 Ganaste <b>${soles(t.premio)}</b> (puesto ${t.puesto}.º). <b>Premio pagado ✓</b></div>`;
+  if (t.estado === 'GANADOR') return `<div class="gana"><h3>¡Ganaste ${soles(t.premio)}! 🏆</h3><p style="margin:6px 0 12px;font-size:.88rem">Quedaste ${t.puesto}.º. Escríbenos por WhatsApp con tu ticket <b>${esc(t.ticket)}</b> y te pagamos por Yape.</p>
+    <a class="btn" style="background:var(--tinta)" target="_blank" rel="noopener" href="${linkReclamo(t)}">Reclamar mi premio</a></div>`;
+  if (t.estado.indexOf('GANADOR') === 0) return `<div class="mio">🏆 Vas ${t.puesto}.º con premio de <b>${soles(t.premio)}</b>. Estamos confirmando el resultado oficial; en cuanto diga <b>Ganador</b> podrás reclamarlo aquí.</div>`;
+  return '';
+}
+
+/* ---------- sala ---------- */
+let salaActual = null, datosSala = null, pron = null, timerSala = null;
+async function abrirSala(id) {
+  salaActual = id; datosSala = null;
+  const s = salas.find(x => x.id === id);
+  $('salaHead').innerHTML = s ? cabecera(s) : ''; $('salaCuerpo').innerHTML = '<div class="vacio">Abriendo la sala…</div>';
+  ir('sSala'); try { history.replaceState(null, '', '#' + id); } catch (e) {}
+  try {
+    const r = await golGet({ accion: 'sala', id });
+    if (!r.ok) throw new Error(r.error);
+    datosSala = r; waAdmin = r.whatsapp || waAdmin;
+    const i = salas.findIndex(x => x.id === id); if (i >= 0) salas[i] = r.sala;
+    pron = { gl: 1, gv: 1, primer: 'L', amarillas: 4, corners: 9, goleador: '' };
+    pintarSala();
+  } catch (e) { $('salaCuerpo').innerHTML = `<div class="vacio">${esc(e.message)}</div>`; }
+}
+function volverLista() { salaActual = null; try { history.replaceState(null, '', AQUI); } catch (e) {} ir('sInicio'); pintarSalas(); }
+function cabecera(s, premios) {
+  const ini = msDe(s.inicio), ab = abierta(s);
+  premios = premios || [0.4, 0.25, 0.05].map(p => Math.floor(s.pozo * p * 100) / 100);
+  return `<div class="m-top"><span class="liga">${esc(s.liga)}</span><span>${diaTxt(ini)} · ${horaTxt(ini)}</span></div>
+    <div class="equipos">
+      <div class="eq">${escudo(s.logoLocal)}<span>${esc(s.local)}</span></div>
+      <div class="vs${s.resultado ? ' res' : ''}">${s.resultado ? esc(s.resultado) : 'vs'}</div>
+      <div class="eq">${escudo(s.logoVisita)}<span>${esc(s.visita)}</span></div>
+    </div>
+    <div class="pozo">${['1.º', '2.º', '3.º'].map((t, i) => `<div><small>${t}</small><b>${s.pozo ? soles(premios[i]) : ['40%', '25%', '5%'][i]}</b></div>`).join('')}</div>
+    <div class="pozo-tot">${s.jugadores} jugador${s.jugadores === 1 ? '' : 'es'} · pozo <b>${soles(s.pozo)}</b>${ab ? ` · cierra en <b data-cierre="${msDe(s.cierre)}">${falta(msDe(s.cierre))}</b>` : ''}</div>`;
+}
+function pintarSala() {
+  if (!datosSala) return;
+  const s = datosSala.sala;
+  $('salaHead').innerHTML = cabecera(s, datosSala.premios);
+  const mio = misSalasIds[s.id];
+  let h = '';
+  if (abierta(s)) h = mio ? miPronostico(mio, true) : formulario(s);
+  else if (s.estado === 'CANCELADA') h = `<div class="vacio">Esta sala se canceló (partido postergado o no llegó a ${reglas ? reglas.minJugadores : 5} jugadores). Si entraste, tus Golcitos ya volvieron a tu cuenta.</div>`;
+  else if (s.estado === 'ABIERTA') h = (mio ? miPronostico(mio) : '') + '<div class="mio" style="margin-top:14px">⏱️ La sala acaba de cerrar. En unos minutos verás los pronósticos de todos.</div>';
+  else h = (mio ? cajaPremio(mio) + miPronostico(mio) : '') + resultadoYRanking(s);
+  $('salaCuerpo').innerHTML = h;
+  if (abierta(s) && !mio) pintarForm();
+}
+function miPronostico(t, abiertaTxt) {
+  const p = t.pronostico, primer = { L: datosSala.sala.local, V: datosSala.sala.visita, N: 'Nadie' }[p.primer] || '-';
+  return `<div class="mio"><div style="display:flex;justify-content:space-between;align-items:center"><b>Tu pronóstico</b><span style="font-size:.8rem;color:var(--gris)">${esc(t.ticket)}</span></div>
+    <div style="font-size:.88rem;line-height:1.6;margin-top:6px">Marcador <b>${esc(p.gl)} - ${esc(p.gv)}</b> · Primer gol: <b>${esc(primer)}</b><br>
+    Amarillas <b>${esc(p.amarillas)}</b> · Córners <b>${esc(p.corners)}</b>${p.goleador ? ` · Goleador <b>${esc(p.goleador)}</b>` : ''}
+    ${t.puntos != null ? `<br>Puntos: <b>${t.puntos}</b>${t.detalle ? ` <span style="color:var(--gris)">(${esc(t.detalle)})</span>` : ''}` : ''}</div>
+    ${abiertaTxt ? '<p class="ayuda" style="margin-top:8px">Ya estás dentro. Los pronósticos de todos se ven cuando cierre la sala. ¡Suerte!</p>' : ''}</div>`;
+}
+function resultadoYRanking(s) {
+  const r = datosSala.resultado, rk = datosSala.ranking || [];
+  let h = '';
+  if (r) h += `<div class="bloque" style="margin-top:14px"><h3>Resultado oficial</h3><div class="puntos">
+      <span>Marcador</span><b>${esc(r.gl)} - ${esc(r.gv)}</b>
+      <span>Primer gol</span><b>${esc({ L: s.local, V: s.visita, N: 'Nadie' }[r.primer] || '-')}</b>
+      <span>Amarillas</span><b>${r.amarillas === '' ? '-' : esc(r.amarillas)}</b><span>Córners</span><b>${r.corners === '' ? '-' : esc(r.corners)}</b>
+      <span>Goles de</span><b>${esc(r.goleadores || '-')}</b></div></div>`;
+  else h += `<div class="mio" style="margin-top:14px">⏱️ El partido está en juego o esperando el resultado oficial. Los puntos aparecen al terminar.</div>`;
+  h += `<div class="bloque ranking"><h3>${rk.some(x => x.pts != null) ? 'Ranking' : 'Pronósticos de la sala'}</h3><div class="lista">` +
+    (rk.length ? rk.map((x, i) => `<div class="item${perfil && x.usuario === perfil.usuario ? ' yo' : ''}">
+      <div style="display:flex;align-items:center"><span class="pos${x.puesto && x.puesto <= 3 ? ' p' + x.puesto : ''}">${x.puesto || i + 1}</span>
+      <div><div class="cod" style="font-size:.92rem">@${esc(x.usuario)}</div><div class="sub">Pronóstico ${esc(x.pronostico)}${x.detalle ? ' · ' + esc(x.detalle) : ''}</div></div></div>
+      <div style="text-align:right"><b style="font-family:var(--display)">${x.pts != null ? x.pts + ' pts' : '-'}</b>${x.premio ? `<div class="sub" style="color:var(--verde-2)">${soles(x.premio)}</div>` : ''}</div></div>`).join('')
+      : '<div class="vacio">Nadie entró a esta sala.</div>') + '</div></div>';
+  return h;
+}
+
+/* ---------- formulario de pronóstico ---------- */
+function formulario(s) {
+  const pl = datosSala.plantel || { local: [], visita: [] };
+  const hayPl = pl.local.length || pl.visita.length;
+  return `<h3 style="font-family:var(--display);font-size:1.15rem">Tu pronóstico</h3>
+  <p class="ayuda">Solo los 90 minutos (más descuento). Puedes entrar una vez por sala.</p>
+  <div class="bloque" style="margin-top:12px"><div class="marcador">
+    <div class="step"><span class="nom">${esc(s.local)}</span><div class="ctl"><button type="button" aria-label="Menos goles ${esc(s.local)}" onclick="mover('gl',-1)">−</button><span class="n" id="nGl">1</span><button type="button" aria-label="Más goles ${esc(s.local)}" onclick="mover('gl',1)">+</button></div></div>
+    <span class="guion">-</span>
+    <div class="step"><span class="nom">${esc(s.visita)}</span><div class="ctl"><button type="button" aria-label="Menos goles ${esc(s.visita)}" onclick="mover('gv',-1)">−</button><span class="n" id="nGv">1</span><button type="button" aria-label="Más goles ${esc(s.visita)}" onclick="mover('gv',1)">+</button></div></div>
+  </div></div>
+  <div class="bloque"><h3>¿Quién marca primero?</h3><div class="opciones">
+    <button type="button" id="pL" onclick="primer('L')">${esc(s.local)}</button><button type="button" id="pN" onclick="primer('N')">Nadie (0-0)</button><button type="button" id="pV" onclick="primer('V')">${esc(s.visita)}</button>
+  </div></div>
+  <div class="bloque"><h3>Tarjetas y córners</h3><p class="ayuda">El total de los dos equipos.</p><div class="dos-step">
+    <div class="mini-step"><small>🟨 Amarillas</small><div class="ctl"><button type="button" aria-label="Menos amarillas" onclick="mover('amarillas',-1)">−</button><span class="n" id="nAma">4</span><button type="button" aria-label="Más amarillas" onclick="mover('amarillas',1)">+</button></div></div>
+    <div class="mini-step"><small>🚩 Córners</small><div class="ctl"><button type="button" aria-label="Menos córners" onclick="mover('corners',-1)">−</button><span class="n" id="nCor">9</span><button type="button" aria-label="Más córners" onclick="mover('corners',1)">+</button></div></div>
+  </div></div>
+  <div class="bloque"><h3>Goleador <span style="font-weight:400;font-size:.85rem;color:var(--gris)">(opcional, +5)</span></h3>
+    <div class="campo" style="margin:0"><select id="selGol" onchange="pron.goleador=this.value" ${hayPl ? '' : 'disabled'}>
+      <option value="">${hayPl ? 'Sin goleador' : 'Aún no tenemos los planteles'}</option>
+      ${pl.local.length ? `<optgroup label="${esc(s.local)}">${pl.local.map(j => `<option>${esc(j)}</option>`).join('')}</optgroup>` : ''}
+      ${pl.visita.length ? `<optgroup label="${esc(s.visita)}">${pl.visita.map(j => `<option>${esc(j)}</option>`).join('')}</optgroup>` : ''}
+    </select></div></div>
+  <div class="msg" id="mEnt" style="margin-top:14px"></div>
+  <div class="pagar-box">${perfil
+    ? `<div class="saldo-l"><span>Tienes <b>${perfil.saldoGolcitos} ⚽</b></span><span>Entrada <b>${s.entrada} ⚽</b></span></div>` + ((perfil.saldoGolcitos || 0) >= s.entrada
+      ? `<button type="button" class="btn" id="bEnt" onclick="entrarSala()">Entrar por ${s.entrada} Golcitos</button>`
+      : `<a class="btn" href="${URL_RECARGA}">Recargar Golcitos</a><p class="ayuda" style="text-align:center;margin:6px 0 0">Recargas con Yape y vuelves aquí con un toque.</p>`)
+    : `<button type="button" class="btn" onclick="pedirCuenta(()=>{ir('sSala');pintarSala();})">Ingresar para jugar</button>`}</div>`;
+}
+const LIM = { gl: [0, 15], gv: [0, 15], amarillas: [0, 25], corners: [0, 30] };
+function mover(k, d) { pron[k] = Math.min(LIM[k][1], Math.max(LIM[k][0], pron[k] + d)); pintarForm(); }
+function primer(p) { pron.primer = p; pintarForm(); }
+function pintarForm() {
+  const p = pron, tot = p.gl + p.gv;
+  // el primer gol tiene que cuadrar con el marcador
+  if (tot === 0) p.primer = 'N';
+  else if (p.primer === 'N' || (p.primer === 'L' && !p.gl) || (p.primer === 'V' && !p.gv)) p.primer = p.gl ? 'L' : 'V';
+  $('nGl').innerText = p.gl; $('nGv').innerText = p.gv; $('nAma').innerText = p.amarillas; $('nCor').innerText = p.corners;
+  ['L', 'N', 'V'].forEach(x => $('p' + x).classList.toggle('on', p.primer === x));
+  $('pN').disabled = tot > 0; $('pL').disabled = !p.gl; $('pV').disabled = !p.gv;
+  const sel = $('selGol'); if (sel && sel.options.length > 1) { sel.disabled = tot === 0; if (tot === 0) { sel.value = ''; p.goleador = ''; } }
+}
+async function entrarSala() {
+  const s = datosSala.sala, b = $('bEnt'); msg('mEnt');
+  ocupado(b, true, 'Entrando…'); luki('hero', 'piensa');
+  try {
+    const r = await golPost({ accion: 'entrar', sala: s.id, pronostico: pron });
+    if (!r.ok) {
+      if (r.error === 'SESION') { cerrarSesion(); pedirCuenta(() => { ir('sSala'); pintarSala(); }); return; }
+      if (r.error === 'SALDO_INSUFICIENTE') { if (r.saldo != null) ponerSaldo(r.saldo); pintarSala(); msg('mEnt', 'Te faltan Golcitos para esta sala. Recarga y vuelve.'); return; }
+      throw new Error(r.error);
+    }
+    ponerSaldo(r.saldoGolcitos, true);
+    const t = { ticket: r.ticket, sala: s, pronostico: { ...pron }, puntos: null, detalle: '', estado: 'EN JUEGO', premio: 0 };
+    misSalasIds[s.id] = t; mias = [t, ...mias];
+    s.jugadores = r.jugadores; s.pozo = r.pozo; datosSala.premios = [0.4, 0.25, 0.05].map(p => Math.floor(r.pozo * p * 100) / 100);
+    pintarSala(); cargarMias();
+    luki('hero', 'fiesta', `¡Ya estás en ${s.partido}! Tu ticket es ${r.ticket}.`);
+    modal('¡Ya estás en la sala!', `Tu ticket es <b style="font-family:var(--display);font-size:1.2rem">${esc(r.ticket)}</b>
+      <button type="button" class="link" onclick="copiar('${esc(r.ticket)}')">Copiar</button><br>
+      ${esc(s.local)} ${pron.gl} - ${pron.gv} ${esc(s.visita)}. Guárdalo: con este código reclamas tu premio si ganas.`);
+  } catch (e) { msg('mEnt', e.message); luki('hero', 'triste'); if ($('bEnt')) ocupado($('bEnt'), false, `Entrar por ${s.entrada} Golcitos`); }
+}
+
+/* ---------- consultar ticket ---------- */
+async function consultar(ev) {
+  ev.preventDefault(); msg('mTk'); $('tkRes').innerHTML = '';
+  const c = $('tkCodigo').value.trim().toUpperCase();
+  if (!/^LGT-[A-Z0-9]{6}$/.test(c)) return msg('mTk', 'El código tiene la forma LGT-XXXXXX.');
+  try {
+    const r = await golGet({ accion: 'ticket', codigo: c });
+    if (!r.ok) throw new Error(r.error);
+    waAdmin = r.whatsapp || waAdmin;
+    const t = r.ticket, s = t.sala;
+    const premio = t.estado === 'GANADOR' && !t.premioPagado ? `<div class="gana"><h3>¡Ticket ganador: ${soles(t.premio)}! 🏆</h3>
+        <p style="margin:6px 0 12px;font-size:.88rem">Puesto ${t.puesto}.º. Reclama por WhatsApp con este código.</p>
+        <a class="btn" style="background:var(--tinta)" target="_blank" rel="noopener" href="${linkReclamo(t)}">Reclamar premio</a></div>` : cajaPremio(t);
+    $('tkRes').innerHTML = `<div class="mio"><b>${esc(s ? s.partido : '')}</b><div class="sub" style="font-size:.8rem;color:var(--gris)">${s ? diaTxt(msDe(s.inicio)) + ' · ' + horaTxt(msDe(s.inicio)) : ''} · ${esc(t.usuario)}</div>
+      <div style="font-size:.88rem;margin-top:6px">Pronóstico <b>${esc(t.pronostico.gl)} - ${esc(t.pronostico.gv)}</b>${s && s.resultado ? ` · Resultado <b>${esc(s.resultado)}</b>` : ''}<br>
+      ${t.puntos != null ? `Puntos <b>${t.puntos}</b>${t.puesto ? ` · Puesto <b>${t.puesto}.º</b>` : ''}` : 'Aún sin puntos'} · ${estadoTicket(t)}</div></div>${premio}`;
+  } catch (e) { msg('mTk', e.message || 'No pudimos consultar.'); }
+}
+
+/* ---------- arranque ---------- */
+function tick() {
+  document.querySelectorAll('[data-cierre]').forEach(el => {
+    const ms = Number(el.dataset.cierre);
+    if (ms <= Date.now()) { el.removeAttribute('data-cierre'); el.innerText = 'cerrada'; if (salaActual) abrirSala(salaActual); else cargarSalas(); }
+    else el.innerText = falta(ms);
+  });
+}
+async function iniciar() {
+  document.querySelectorAll('.asunto').forEach(e => e.innerText = ASUNTO_CODIGO);
+  $('rgPais').innerHTML = PAISES.map(([c, n, p]) => `<option value="${c}">${n}${p ? ' (+' + p + ')' : ''}</option>`).join('');
+  pintarPuntos();
+  if (!GOOL_OK) { $('listaSalas').innerHTML = '<div class="vacio">Luki Gool se está preparando. ¡Vuelve en un rato!</div>'; }
+  const pS = cargarSalas();
+  if (token && CTA_OK) { try { const r = await apiCuentas('sesion'); entrar(r.perfil, false); luki('hero', 'saluda', `¡Hola, ${r.perfil.nombre}! Tienes ${r.perfil.saldoGolcitos || 0} Golcitos.`); } catch (e) {} }
+  await pS;
+  const h = location.hash.slice(1); if (/^LG-/.test(h)) abrirSala(h);
+  setInterval(tick, 1000); setInterval(() => { if (!salaActual && !document.hidden) cargarSalas(); }, 60000);
+}
+iniciar();
+
+</script>
+</body>
+</html>
