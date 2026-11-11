@@ -217,6 +217,13 @@ a.btn{text-decoration:none}
 .modal p{font-size:.9rem;color:var(--tinta-2);line-height:1.5;margin-bottom:16px}
 .modal .luki{margin:0 auto}
 @media (max-width:380px){.dos{grid-template-columns:1fr}.saldo{font-size:2.6rem}}
+.paso-y{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;align-items:center;text-align:left;background:#F5F8F7;border-radius:18px;padding:12px 14px;margin:10px 0}
+.paso-y .pn{width:28px;height:28px;border-radius:50%;background:var(--tinta);color:#fff;display:flex;align-items:center;justify-content:center;font-family:var(--display);font-weight:700;font-size:.88rem;grid-row:span 3;align-self:start;margin-top:2px}
+.paso-y p{margin:0;font-size:.86rem;color:var(--tinta-2);line-height:1.4}
+.paso-y .dato{font-family:var(--display);font-weight:700;font-size:1.35rem;letter-spacing:.03em;color:var(--tinta);word-break:break-all}
+.paso-y .cbtn{justify-self:start;border:1.5px solid var(--tinta);border-radius:999px;background:transparent;color:var(--tinta);padding:7px 14px;font-size:.82rem;font-weight:600;cursor:pointer;margin-top:4px}
+.paso-y .cbtn.principal{background:var(--tinta);color:#fff}
+.paso-y .ojo-y{font-size:.76rem;color:var(--gris)}
 /* ================= LUKI GOOL ================= */
 body{display:block;padding:0;background:var(--menta)}
 .app{max-width:480px;margin:0 auto;padding:12px 14px 40px}
@@ -322,6 +329,18 @@ body{display:block;padding:0;background:var(--menta)}
 @keyframes menos{0%{opacity:0;transform:translate(-50%,10px)}20%{opacity:1}100%{opacity:0;transform:translate(-50%,-30px)}}
 @media (prefers-reduced-motion:reduce){.sticker span{animation:none}}
 .ranking .item>div:last-child{white-space:nowrap;flex-shrink:0}
+.opciones.minutos{grid-template-columns:repeat(4,1fr)}
+.opciones.dos{grid-template-columns:1fr 1fr}
+.dos-step h3{font-family:var(--display);font-size:1.05rem;margin:0 0 8px 2px}
+.desglose{background:#fff;border:1.5px solid var(--linea);border-radius:14px;padding:6px 8px;margin:-4px 0 4px}
+.tabla-dg{width:100%;border-collapse:collapse;font-size:.8rem}
+.tabla-dg th{font-weight:600;color:var(--gris);text-align:left;padding:6px 4px;border-bottom:1px solid var(--linea)}
+.tabla-dg td{padding:6px 4px;border-bottom:1px dashed var(--linea);vertical-align:top}
+.tabla-dg td:first-child{color:var(--tinta-2);font-weight:600}
+.tabla-dg td:last-child,.tabla-dg th:last-child{text-align:right;font-family:var(--display);font-weight:700;white-space:nowrap}
+.tabla-dg td.si{color:var(--verde-2)}
+.tabla-dg tfoot td{border:0;font-weight:700;padding-top:8px}
+.item.toca:focus-visible,.match:focus-visible{outline:2px solid var(--verde);outline-offset:2px}
 </style>
 </head>
 <body>
@@ -406,13 +425,13 @@ body{display:block;padding:0;background:var(--menta)}
       <div class="hero-txt">
         <span class="tag-live">⚽ Liga 1 y Champions</span>
         <div class="sticker"><span class="s1">Luki</span><span class="s2">Gool</span></div>
-        <p>Una sala por partido. Entras con 5 Golcitos y el mejor pronóstico se lleva el 40% del pozo.</p>
+        <p>Una sala por partido. Cada pozo arranca con S/ 10 y suma S/ 5 por jugador. El mejor pronóstico se lleva el 40%.</p>
       </div>
     </div>
 
     <div class="card" style="margin-top:12px">
       <div class="chips">
-        <span>Entrada <b>5 ⚽</b> (S/ 5)</span><span>1.º <b>40%</b></span><span>2.º <b>25%</b></span><span>3.º <b>5%</b></span>
+        <span>Pozo inicial <b>S/ 10</b></span><span>Entrada <b>5 ⚽</b> (S/ 5)</span><span>1.º <b>40%</b></span><span>2.º <b>25%</b></span><span>3.º <b>5%</b></span>
       </div>
       <div class="tabs3" role="tablist">
         <button type="button" class="on" id="t-partidos" onclick="verVista('partidos')">Partidos</button>
@@ -447,10 +466,12 @@ body{display:block;padding:0;background:var(--menta)}
         <summary style="cursor:pointer;font-family:var(--display);font-weight:700;padding:4px 2px 10px">Cómo se juega y cómo cobras</summary>
         <ol class="reglas">
           <li>Cada partido tiene su sala. Entras con <b>5 Golcitos</b> (1 Golcito = S/ 1) y dejas tu pronóstico. Una entrada por cuenta en cada sala.</li>
+          <li>Cada sala arranca con <b>S/ 10 de pozo</b> que pone Jakuna, y suma S/ 5 por cada jugador.</li>
           <li>La sala cierra <b>5 minutos antes</b> del pitazo. Hasta entonces nadie ve los pronósticos de los demás.</li>
           <li>Se necesitan al menos <b>5 jugadores</b>. Si no se llega, o el partido se posterga o cancela, te devolvemos tus Golcitos.</li>
-          <li>Cuenta solo el tiempo reglamentario (90 minutos más descuento). Los datos oficiales salen de API-Football.</li>
-          <li>Premios del pozo: 1.º 40%, 2.º 25%, 3.º 5%. Si hay empate en puntos, se reparten en partes iguales.</li>
+          <li>Cuenta solo el tiempo reglamentario (90 minutos más descuento). Los datos oficiales salen de ESPN.</li>
+          <li>Premios del pozo: 1.º 40%, 2.º 25%, 3.º 5%. Son 10 preguntas, así que los empates son raros; si igual hay empate en puntos, el premio se reparte en partes iguales.</li>
+          <li>Al cerrar la sala puedes ver el pronóstico de cada jugador y cuántos puntos sacó en cada pregunta.</li>
           <li>Si ganas, reclama tu premio por WhatsApp con tu código de ticket. Te pagamos por Yape.</li>
           <li>Solo mayores de 18 años. Juega con responsabilidad.</li>
         </ol>
@@ -747,10 +768,12 @@ document.querySelectorAll('#filtros button').forEach(b => b.onclick = () => {
   filtro = b.dataset.f; document.querySelectorAll('#filtros button').forEach(x => x.classList.toggle('on', x === b)); pintarSalas();
 });
 function pintarPuntos() {
-  const P = (reglas && reglas.puntos) || { exacto: 10, resultado: 4, totalGoles: 3, primerGol: 3, goleador: 5, amarillasExacto: 3, amarillasCerca: 2, cornersExacto: 3, cornersCerca: 2 };
+  const P = (reglas && reglas.puntos) || { exacto: 10, resultado: 4, totalGoles: 3, primerGol: 3, goleador: 5, amarillasExacto: 3, amarillasCerca: 2, cornersExacto: 3, cornersCerca: 2, medioTiempo: 3, minutoGol: 3, roja: 2, penal: 2, tirosExacto: 3, tirosCerca: 2 };
   $('tablaPuntos').innerHTML = [['Marcador exacto', P.exacto], ['Aciertas quién gana o el empate', P.resultado], ['Total de goles (si no fue exacto)', P.totalGoles],
     ['Quién marca primero', P.primerGol], ['Tu goleador anota', P.goleador], ['Amarillas exactas · a 1 de distancia', `${P.amarillasExacto} · ${P.amarillasCerca}`],
-    ['Córners exactos · a 2 de distancia', `${P.cornersExacto} · ${P.cornersCerca}`]].map(([a, b]) => `<span>${a}</span><b>+${b}</b>`).join('');
+    ['Córners exactos · a 2 de distancia', `${P.cornersExacto} · ${P.cornersCerca}`],
+    ['Cómo van al medio tiempo', P.medioTiempo || 3], ['Minuto del primer gol', P.minutoGol || 3], ['Si hay roja o no', P.roja || 2], ['Si hay penal o no', P.penal || 2],
+    ['Tiros al arco exactos · a 2 de distancia', `${P.tirosExacto || 3} · ${P.tirosCerca || 2}`]].map(([a, b]) => `<span>${a}</span><b>+${b}</b>`).join('');
 }
 
 /* ---------- mis salas ---------- */
@@ -801,7 +824,7 @@ async function abrirSala(id) {
     if (!r.ok) throw new Error(r.error);
     datosSala = r; waAdmin = r.whatsapp || waAdmin;
     const i = salas.findIndex(x => x.id === id); if (i >= 0) salas[i] = r.sala;
-    pron = { gl: 1, gv: 1, primer: 'L', amarillas: 4, corners: 9, goleador: '' };
+    pron = { gl: 1, gv: 1, primer: 'L', amarillas: 4, corners: 9, goleador: '', mt: 'E', minuto: '16-30', roja: 'NO', penal: 'NO', tiros: 8 };
     pintarSala();
   } catch (e) { $('salaCuerpo').innerHTML = `<div class="vacio">${esc(e.message)}</div>`; }
 }
@@ -836,6 +859,7 @@ function miPronostico(t, abiertaTxt) {
   return `<div class="mio"><div style="display:flex;justify-content:space-between;align-items:center"><b>Tu pronóstico</b><span style="font-size:.8rem;color:var(--gris)">${esc(t.ticket)}</span></div>
     <div style="font-size:.88rem;line-height:1.6;margin-top:6px">Marcador <b>${esc(p.gl)} - ${esc(p.gv)}</b> · Primer gol: <b>${esc(primer)}</b><br>
     Amarillas <b>${esc(p.amarillas)}</b> · Córners <b>${esc(p.corners)}</b>${p.goleador ? ` · Goleador <b>${esc(p.goleador)}</b>` : ''}
+    ${p.mt ? `<br>Medio tiempo <b>${esc(txtMt(p.mt, datosSala.sala))}</b> · 1.er gol <b>${esc(txtMin(p.minuto))}</b> · Roja <b>${txtSi(p.roja)}</b> · Penal <b>${txtSi(p.penal)}</b> · Tiros al arco <b>${esc(p.tiros)}</b>` : ''}
     ${t.puntos != null ? `<br>Puntos: <b>${t.puntos}</b>${t.detalle ? ` <span style="color:var(--gris)">(${esc(t.detalle)})</span>` : ''}` : ''}</div>
     ${abiertaTxt ? '<p class="ayuda" style="margin-top:8px">Ya estás dentro. Los pronósticos de todos se ven cuando cierre la sala. ¡Suerte!</p>' : ''}</div>`;
 }
@@ -846,15 +870,46 @@ function resultadoYRanking(s) {
       <span>Marcador</span><b>${esc(r.gl)} - ${esc(r.gv)}</b>
       <span>Primer gol</span><b>${esc({ L: s.local, V: s.visita, N: 'Nadie' }[r.primer] || '-')}</b>
       <span>Amarillas</span><b>${r.amarillas === '' ? '-' : esc(r.amarillas)}</b><span>Córners</span><b>${r.corners === '' ? '-' : esc(r.corners)}</b>
-      <span>Goles de</span><b>${esc(r.goleadores || '-')}</b></div></div>`;
+      <span>Goles de</span><b>${esc(r.goleadores || '-')}</b>
+      <span>Medio tiempo</span><b>${r.mt ? esc(txtMt(r.mt, s)) : '-'}</b><span>Minuto 1.er gol</span><b>${r.minuto ? esc(txtMin(r.minuto)) : '-'}</b>
+      <span>Roja</span><b>${r.roja ? txtSi(r.roja) : '-'}</b><span>Penal</span><b>${r.penal ? txtSi(r.penal) : '-'}</b>
+      <span>Tiros al arco</span><b>${r.tiros === '' || r.tiros == null ? '-' : esc(r.tiros)}</b></div></div>`;
   else h += `<div class="mio" style="margin-top:14px">⏱️ El partido está en juego o esperando el resultado oficial. Los puntos aparecen al terminar.</div>`;
   h += `<div class="bloque ranking"><h3>${rk.some(x => x.pts != null) ? 'Ranking' : 'Pronósticos de la sala'}</h3><div class="lista">` +
-    (rk.length ? rk.map((x, i) => `<div class="item${perfil && x.usuario === perfil.usuario ? ' yo' : ''}">
+    (rk.length ? rk.map((x, i) => `<div class="item toca${perfil && x.usuario === perfil.usuario ? ' yo' : ''}" onclick="verDetalle(${i})" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();verDetalle(${i})}" role="button" tabindex="0" aria-expanded="false" id="rk${i}">
       <div style="display:flex;align-items:center"><span class="pos${x.puesto && x.puesto <= 3 ? ' p' + x.puesto : ''}">${x.puesto || i + 1}</span>
-      <div><div class="cod" style="font-size:.92rem">@${esc(x.usuario)}</div><div class="sub">Pronóstico ${esc(x.pronostico)}${x.detalle ? ' · ' + esc(x.detalle) : ''}</div></div></div>
-      <div style="text-align:right"><b style="font-family:var(--display)">${x.pts != null ? x.pts + ' pts' : '-'}</b>${x.premio ? `<div class="sub" style="color:var(--verde-2)">${soles(x.premio)}</div>` : ''}</div></div>`).join('')
+      <div><div class="cod" style="font-size:.92rem">@${esc(x.usuario)}</div><div class="sub">Pronóstico ${esc(x.pronostico)} · toca para ver su detalle</div></div></div>
+      <div style="text-align:right"><b style="font-family:var(--display)">${x.pts != null ? x.pts + ' pts' : '-'}</b>${x.premio ? `<div class="sub" style="color:var(--verde-2)">${soles(x.premio)}</div>` : ''}</div></div>
+      <div class="desglose" id="dg${i}" hidden></div>`).join('')
       : '<div class="vacio">Nadie entró a esta sala.</div>') + '</div></div>';
   return h;
+}
+
+function txtMt(v, s) { return { L: 'Gana ' + s.local, E: 'Empate', V: 'Gana ' + s.visita }[String(v).toUpperCase()] || '-'; }
+function txtMin(v) { v = String(v || '').toUpperCase(); return !v ? '-' : v === 'SIN GOL' ? 'Sin gol' : v + "'"; }
+function txtSi(v) { v = String(v || '').toUpperCase(); return v === 'SI' ? 'Sí' : v === 'NO' ? 'No' : '-'; }
+// Desglose de puntos de un jugador: su pronóstico vs el resultado, pregunta por pregunta
+function verDetalle(i) {
+  const x = (datosSala.ranking || [])[i], d = $('dg' + i), it = $('rk' + i);
+  if (!x || !d) return;
+  if (!d.hidden) { d.hidden = true; it.setAttribute('aria-expanded', 'false'); return; }
+  const s = datosSala.sala, r = datosSala.resultado || {}, p = x.p || {}, por = x.por || {};
+  const fila = (n, k, mio, real) => `<tr><td>${n}</td><td>${mio}</td><td>${real}</td><td class="${por[k] ? 'si' : ''}">${x.pts == null ? '' : (por[k] ? '+' + por[k] : '0')}</td></tr>`;
+  const primerTxt = v => ({ L: s.local, V: s.visita, N: 'Nadie' }[String(v).toUpperCase()] || '-');
+  const hay = datosSala.resultado != null;
+  d.innerHTML = `<table class="tabla-dg"><thead><tr><th></th><th>@${esc(x.usuario)}</th><th>Real</th><th>Pts</th></tr></thead><tbody>
+    ${fila('Marcador', 'marcador', `${esc(p.gl)}-${esc(p.gv)}`, hay ? `${esc(r.gl)}-${esc(r.gv)}` : '-')}
+    ${fila('Primer gol', 'primer', esc(primerTxt(p.primer)), hay ? esc(primerTxt(r.primer)) : '-')}
+    ${fila('Goleador', 'goleador', esc(p.goleador || '-'), hay ? esc(r.goleadores || '-') : '-')}
+    ${fila('Amarillas', 'amarillas', esc(p.amarillas), hay && r.amarillas !== '' ? esc(r.amarillas) : '-')}
+    ${fila('Córners', 'corners', esc(p.corners), hay && r.corners !== '' ? esc(r.corners) : '-')}
+    ${p.mt ? fila('Medio tiempo', 'mt', esc(txtMt(p.mt, s)), hay && r.mt ? esc(txtMt(r.mt, s)) : '-') : ''}
+    ${p.mt ? fila('1.er gol (min)', 'minuto', esc(txtMin(p.minuto)), hay ? esc(txtMin(r.minuto)) : '-') : ''}
+    ${p.mt ? fila('Roja', 'roja', txtSi(p.roja), hay ? txtSi(r.roja) : '-') : ''}
+    ${p.mt ? fila('Penal', 'penal', txtSi(p.penal), hay ? txtSi(r.penal) : '-') : ''}
+    ${p.mt ? fila('Tiros al arco', 'tiros', esc(p.tiros), hay && r.tiros !== '' && r.tiros != null ? esc(r.tiros) : '-') : ''}
+    </tbody>${x.pts != null ? `<tfoot><tr><td colspan="3">Total</td><td>${x.pts}</td></tr></tfoot>` : ''}</table>`;
+  d.hidden = false; it.setAttribute('aria-expanded', 'true');
 }
 
 /* ---------- formulario de pronóstico ---------- */
@@ -875,6 +930,19 @@ function formulario(s) {
     <div class="mini-step"><small>🟨 Amarillas</small><div class="ctl"><button type="button" aria-label="Menos amarillas" onclick="mover('amarillas',-1)">−</button><span class="n" id="nAma">4</span><button type="button" aria-label="Más amarillas" onclick="mover('amarillas',1)">+</button></div></div>
     <div class="mini-step"><small>🚩 Córners</small><div class="ctl"><button type="button" aria-label="Menos córners" onclick="mover('corners',-1)">−</button><span class="n" id="nCor">9</span><button type="button" aria-label="Más córners" onclick="mover('corners',1)">+</button></div></div>
   </div></div>
+  <div class="bloque"><h3>¿Cómo van al medio tiempo?</h3><div class="opciones">
+    <button type="button" id="mtL" onclick="medio('L')">Gana ${esc(s.local)}</button><button type="button" id="mtE" onclick="medio('E')">Empate</button><button type="button" id="mtV" onclick="medio('V')">Gana ${esc(s.visita)}</button>
+  </div></div>
+  <div class="bloque"><h3>¿En qué minuto cae el primer gol?</h3><div class="opciones minutos">
+    ${RANGOS.map((r, i) => `<button type="button" id="mi${i}" onclick="minutoGol('${r}')">${r === 'SIN GOL' ? 'Sin gol' : r + "'"}</button>`).join('')}
+  </div></div>
+  <div class="bloque"><div class="dos-step">
+    <div><h3>¿Habrá roja?</h3><div class="opciones dos"><button type="button" id="rojaSI" onclick="sino('roja','SI')">Sí</button><button type="button" id="rojaNO" onclick="sino('roja','NO')">No</button></div></div>
+    <div><h3>¿Habrá penal?</h3><div class="opciones dos"><button type="button" id="penalSI" onclick="sino('penal','SI')">Sí</button><button type="button" id="penalNO" onclick="sino('penal','NO')">No</button></div></div>
+  </div><p class="ayuda" style="margin-top:6px">Penal cobrado en los 90', se meta o se falle.</p></div>
+  <div class="bloque"><h3>Tiros al arco</h3><p class="ayuda">El total de los dos equipos.</p>
+    <div class="mini-step" style="max-width:200px"><small>🎯 Tiros al arco</small><div class="ctl"><button type="button" aria-label="Menos tiros al arco" onclick="mover('tiros',-1)">−</button><span class="n" id="nTir">8</span><button type="button" aria-label="Más tiros al arco" onclick="mover('tiros',1)">+</button></div></div>
+  </div>
   <div class="bloque"><h3>Goleador <span style="font-weight:400;font-size:.85rem;color:var(--gris)">(opcional, +5)</span></h3>
     <div class="campo" style="margin:0"><select id="selGol" onchange="pron.goleador=this.value" ${hayPl ? '' : 'disabled'}>
       <option value="">${hayPl ? 'Sin goleador' : 'Aún no tenemos los planteles'}</option>
@@ -888,7 +956,12 @@ function formulario(s) {
       : `<a class="btn" href="${URL_RECARGA}">Recargar Golcitos</a><p class="ayuda" style="text-align:center;margin:6px 0 0">Recargas con Yape y vuelves aquí con un toque.</p>`)
     : `<button type="button" class="btn" onclick="pedirCuenta(()=>{ir('sSala');pintarSala();})">Ingresar para jugar</button>`}</div>`;
 }
-const LIM = { gl: [0, 15], gv: [0, 15], amarillas: [0, 25], corners: [0, 30] };
+const LIM = { gl: [0, 15], gv: [0, 15], amarillas: [0, 25], corners: [0, 30], tiros: [0, 40] };
+const RANGOS = ['1-15', '16-30', '31-45', '46-60', '61-75', '76-90', 'SIN GOL'];
+const segundoTiempo = r => ['46-60', '61-75', '76-90'].indexOf(r) > -1;
+function medio(x) { pron.mt = x; if (x !== 'E' && segundoTiempo(pron.minuto)) pron.minuto = '31-45'; pintarForm(); }
+function minutoGol(r) { pron.minuto = r; if (segundoTiempo(r)) pron.mt = 'E'; pintarForm(); }
+function sino(k, v) { pron[k] = v; pintarForm(); }
 function mover(k, d) { pron[k] = Math.min(LIM[k][1], Math.max(LIM[k][0], pron[k] + d)); pintarForm(); }
 function primer(p) { pron.primer = p; pintarForm(); }
 function pintarForm() {
@@ -896,7 +969,17 @@ function pintarForm() {
   // el primer gol tiene que cuadrar con el marcador
   if (tot === 0) p.primer = 'N';
   else if (p.primer === 'N' || (p.primer === 'L' && !p.gl) || (p.primer === 'V' && !p.gv)) p.primer = p.gl ? 'L' : 'V';
-  $('nGl').innerText = p.gl; $('nGv').innerText = p.gv; $('nAma').innerText = p.amarillas; $('nCor').innerText = p.corners;
+  // medio tiempo y minuto del primer gol también tienen que cuadrar
+  if (tot === 0) { p.mt = 'E'; p.minuto = 'SIN GOL'; }
+  else {
+    if (p.minuto === 'SIN GOL') p.minuto = p.mt === 'E' ? '16-30' : '31-45';
+    if ((p.mt === 'L' && !p.gl) || (p.mt === 'V' && !p.gv)) p.mt = 'E';
+  }
+  $('nGl').innerText = p.gl; $('nGv').innerText = p.gv; $('nAma').innerText = p.amarillas; $('nCor').innerText = p.corners; $('nTir').innerText = p.tiros;
+  ['L', 'E', 'V'].forEach(x => $('mt' + x).classList.toggle('on', p.mt === x));
+  $('mtL').disabled = !p.gl; $('mtV').disabled = !p.gv;
+  RANGOS.forEach((r, i) => { const b = $('mi' + i); b.classList.toggle('on', p.minuto === r); b.disabled = tot === 0 ? r !== 'SIN GOL' : r === 'SIN GOL'; });
+  ['SI', 'NO'].forEach(v => { $('roja' + v).classList.toggle('on', p.roja === v); $('penal' + v).classList.toggle('on', p.penal === v); });
   ['L', 'N', 'V'].forEach(x => $('p' + x).classList.toggle('on', p.primer === x));
   $('pN').disabled = tot > 0; $('pL').disabled = !p.gl; $('pV').disabled = !p.gv;
   const sel = $('selGol'); if (sel && sel.options.length > 1) { sel.disabled = tot === 0; if (tot === 0) { sel.value = ''; p.goleador = ''; } }
